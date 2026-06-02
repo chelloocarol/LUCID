@@ -53,5 +53,16 @@
     "psnr": 18.782538,
     "ssim": 0.740615,
     "mae": 0.099462
+  },
+  "lucidmine_init": {
+    "contrast": 0.53788,
+    "entropy": 6.983541,
+    "dark_channel": 0.093856,
+    "glare": 0.005004,
+    "sharpness": 1137.308405,
+    "vis": 0.6916,
+    "psnr": 18.782538,
+    "ssim": 0.740615,
+    "mae": 0.099462
   }
 }

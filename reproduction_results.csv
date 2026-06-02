@@ -27,8 +27,10 @@ EXP-102,Vis无参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,
 EXP-102,Vis无参考评估(40视频测试集),Retinex,lucidmine-40-video test set,152,Vis,0.3974,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
 EXP-102,Vis无参考评估(40视频测试集),DCP,lucidmine-40-video test set,152,Vis,0.7746,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
 EXP-102,Vis无参考评估(40视频测试集),Student(backbone无微调),lucidmine-40-video test set,152,Vis,0.6916,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
-EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,PSNR/dB,待更新,N/A,待运行,2026-06-02,zero-gate初始化=与Student完全等价
-EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,SSIM,待更新,N/A,待运行,2026-06-02,同上
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,PSNR/dB,18.782538,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,zero-gate初始化=与Student完全等价(PSNR完全一致)
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,SSIM,0.740615,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,MAE,0.099462,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,Vis,0.6916,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
 EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,PSNR/dB,待Modal训练,N/A,待Modal训练完成,N/A,需Modal GPU训练
 EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,SSIM,待Modal训练,N/A,待Modal训练完成,N/A,同上
 EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,MAE,待Modal训练,N/A,待Modal训练完成,N/A,同上

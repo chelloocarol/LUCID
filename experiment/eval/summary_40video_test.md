@@ -20,7 +20,7 @@
 | DCP | 16.335 | 0.6323 | 0.1336 | ✅ 已跑 |
 | Student (backbone, 未微调) | 18.783 | 0.7406 | 0.0995 | ✅ 已跑 |
 | LUCIDMine (未微调，zero-gate) | **18.783** | **0.7406** | **0.0995** | ✅ 已跑（= Student，符合预期） |
-| **LUCIDMine (100epoch 微调后)** | **待训练** | **待训练** | **待训练** | ⏳ 等待 Modal GPU |
+| **LUCIDMine (100epoch 微调后)** | **待训练** | **待训练** | **待训练** | ⏳ 等待 Modal GPU (token_secret) |
 
 ## Vis 无参考指标
 
@@ -31,7 +31,7 @@
 | Retinex | 0.397 |
 | DCP | **0.775** |
 | Student (未微调) | 0.692 |
-| LUCIDMine (未微调) | 待计算 |
+| LUCIDMine (未微调，zero-gate) | **0.692** |
 | **LUCIDMine (微调后)** | ⏳ |
 
 ---

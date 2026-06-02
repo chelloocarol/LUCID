@@ -1,0 +1,2 @@
+{"epoch": 1, "stage": "warmup", "elapsed_s": 1695.8, "train_loss": 0.132555, "train_l1": 0.08866, "train_ssim": 0.179417, "train_edge": 0.160231, "val_psnr": 21.14407, "val_ssim": 0.853956, "val_mae": 0.077674}
+{"epoch": 2, "stage": "adapt", "elapsed_s": 130.7, "train_loss": 0.106206, "train_l1": 0.069639, "train_ssim": 0.146471, "train_edge": 0.145453, "val_psnr": 22.436338, "val_ssim": 0.85971, "val_mae": 0.067274}
