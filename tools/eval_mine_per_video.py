@@ -16,7 +16,7 @@ if ROOT not in sys.path:
 from data import MineManifestDataset
 from loss import BlendIgnoreSSIMLoss, MaskedL1Loss, SSIM, masked_psnr
 from metric import ssim
-from model import Student, Student_x, Teacher
+from model import Student, Student_x, Teacher, LUCIDMine
 
 
 LOW_COUNT_THRESHOLD = 15
@@ -54,6 +54,8 @@ def build_model(model_arch):
         return Student_x()
     if model_arch == "teacher":
         return Teacher()
+    if model_arch == "lucidmine":
+        return LUCIDMine()
     raise ValueError(f"Unsupported model arch: {model_arch}")
 
 
@@ -158,7 +160,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint_path", required=True)
     parser.add_argument("--manifest_path", required=True)
-    parser.add_argument("--model_arch", default="student", choices=["student", "student_x", "teacher"])
+    parser.add_argument("--model_arch", default="student", choices=["student", "student_x", "teacher", "lucidmine"])
     parser.add_argument("--state_key", default="model", choices=["model", "ema_model"])
     parser.add_argument("--crop_size", type=int, default=256)
     parser.add_argument("--batch_size", type=int, default=1)
