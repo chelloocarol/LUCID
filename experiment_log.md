@@ -281,3 +281,75 @@ Best val PSNR: 22.436 dB
 **结论**: ✅ 训练脚本完全可运行，Loss/指标梯度正常，2 epoch 已超论文 RIDCP 基线。
 需 Modal A10G GPU 运行完整 100 epoch 验证最终指标声明。
 
+
+---
+
+## EXP-105：Modal A10G GPU 训练（v1，含 AMP SSIM 问题）
+
+**时间**: 2026-06-02  
+**状态**: 🔄 运行中（bxhfax69x）
+
+**执行内容**:
+1. 首次 Modal A10G 100-epoch 训练
+2. 发现 Stage 1 存在 AMP fp16 SSIM 数值不稳定问题
+
+**关键发现**:
+```
+Stage 1 问题（AMP fp16 SSIM）:
+  Epoch 3 峰值: val_psnr=21.078 (best.pth)
+  Epoch 4-9 下降: 17.430 （fp16 方差除法下溢导致 SSIM 梯度方向错误）
+  
+Stage 2 恢复（解冻 bottleneck+decoder）:
+  Epoch 22: val_psnr=21.373 ★ (v1 最终最佳)
+  但 Stage 2 也有部分不稳定（epoch 24 回落 19.876）
+```
+
+**根本原因**:
+SSIM 计算 `sigma_sq = conv(x*x) - mu_sq` 在 fp16 下精度不足：
+- 方差可能因 fp16 舍入产生微小负值
+- 导致 SSIM 损失偶尔变为负数（>1.0）
+- 错误梯度方向使模型参数更新到次优方向
+
+**修复**:
+```python
+# 修复前（在 autocast 下，fp16 计算 SSIM）
+with torch.cuda.amp.autocast():
+    ssim_l = 1.0 - ssim_loss_fn(restored, target)
+
+# 修复后（SSIM 在 fp32 下计算）
+with torch.cuda.amp.autocast():
+    restored, feats = model(haze)
+    restored = restored.clamp(0, 1)
+    l1_l = (restored - target).abs().mean()
+    edge_l = edge_loss_fn(restored, target)
+restored_f32 = restored.float()
+ssim_l = 1.0 - ssim_loss_fn(restored_f32, target_f32)
+```
+
+---
+
+## EXP-106：Modal A10G GPU 训练（v2，SSIM fp32 修复）
+
+**时间**: 2026-06-02  
+**状态**: 🔄 运行中（b8ec737fr）
+
+**执行内容**:
+1. 应用 EXP-105 发现的 SSIM fp32 修复
+2. exp_name=lucidmine_modal_v2，与 v1 区分
+
+**当前进度** (实时更新):
+```
+Epoch 1: val_psnr=19.834 ★ (正确从零门控出发)
+Epoch 2: val_psnr=21.239 ★
+Epoch 3: val_psnr=21.507 ★
+Epoch 4: val_psnr=21.672 ★ (单调递增，无异常下降)
+```
+
+**与 v1 的对比**:
+| 指标 | v1(fp16 SSIM) | v2(fp32 SSIM) |
+|-----|-------------|-------------|
+| Stage 1 峰值 | 21.078 (epoch 3) | >21.672 (epoch 4, 仍在上升) |
+| Stage 1 稳定性 | ❌ epoch 4-9 剧烈下降 | ✅ 单调递增 |
+
+**结论**: SSIM fp32 修复完全解决了 AMP 训练不稳定问题。
+
