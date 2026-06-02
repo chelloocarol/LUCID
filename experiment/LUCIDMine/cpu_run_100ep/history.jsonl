@@ -8,3 +8,4 @@
 {"epoch": 8, "stage": "warmup", "elapsed_s": 189.6, "train_loss": 0.106564, "train_l1": 0.067979, "train_ssim": 0.155037, "train_edge": 0.151552, "val_psnr": 21.954126, "val_ssim": 0.841251, "val_mae": 0.067138}
 {"epoch": 9, "stage": "warmup", "elapsed_s": 198.7, "train_loss": 0.106103, "train_l1": 0.067918, "train_ssim": 0.153196, "train_edge": 0.150919, "val_psnr": 22.027521, "val_ssim": 0.84186, "val_mae": 0.066661}
 {"epoch": 10, "stage": "warmup", "elapsed_s": 190.8, "train_loss": 0.105082, "train_l1": 0.06699, "train_ssim": 0.153643, "train_edge": 0.147267, "val_psnr": 22.013305, "val_ssim": 0.842689, "val_mae": 0.066631}
+{"epoch": 11, "stage": "warmup", "elapsed_s": 192.2, "train_loss": 0.105194, "train_l1": 0.067219, "train_ssim": 0.152438, "train_edge": 0.149733, "val_psnr": 22.058395, "val_ssim": 0.842985, "val_mae": 0.066408}
