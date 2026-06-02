@@ -351,14 +351,34 @@ Epoch 4: val_psnr=21.672 ★ (单调递增，无异常下降)
 | Stage 1 峰值 | 21.078 (epoch 3) | >21.672 (epoch 4, 仍在上升) |
 | Stage 1 稳定性 | ❌ epoch 4-9 剧烈下降 | ✅ 单调递增 |
 
-**当前最佳进度**（实时更新至 epoch 33/100）:
+**训练结果（83 epoch 后 DataLoader socket 崩溃，Modal job 终止）**:
 ```
-[Stage 2] Epoch 30: val_psnr=22.924 ★ (best)
-[Stage 2] Epoch 32: val_psnr=22.901, val_ssim=0.8687
-[Stage 2] Epoch 33: val_psnr=22.750, val_ssim=0.8688
+总共记录 epoch 数: 83/100
+最佳 epoch: 48
+  val_psnr = 23.1386 ★
+  val_ssim = 0.8669
+  val_mae  = 0.0579
+Stage 2 末期（epoch 74-83）轻微下滑，说明模型在代理集上已充分收敛
 ```
 
+**崩溃原因**: DataLoader worker 进程 Unix socket 断开（`FileNotFoundError: multiprocessing/connection.py`），随后 Modal 函数超时触发 `KeyboardInterrupt`。best.pth（epoch 48）在崩溃前已持久化到 Modal volume。
+
+**关键发现**: 代理集（n=152, RIDCP伪标签）上的 val_psnr=23.14 dB 与论文声明的 23.42 dB 非常接近，但两个数据集不等价，不可直接比较。
+
 **结论**: SSIM fp32 修复完全解决了 AMP 训练不稳定问题。Stage 2 收敛正常，轻微振荡属正常现象（无 v1 的剧烈下降）。
+
+---
+
+## EXP-201：LUCIDMine 微调后正式评估
+
+**时间**: 2026-06-02  
+**状态**: 🔄 运行中（btd7v901o）
+
+**执行内容**:
+1. 从 Modal volume 下载 lucidmine_modal_v2/best.pth（epoch 48，val_psnr=23.139）
+2. 运行 `tools/eval_mine_per_video.py`，lucidmine 架构，全量测试集 n=152
+
+**结果**: 待更新
 
 ---
 
