@@ -5,20 +5,31 @@ EXP-004,参数量验证,LUCIDMine(res_blocks=1),N/A,-,参数量/M,3.0147,N/A,代
 EXP-004,参数量验证,LUCIDMine(res_blocks=4),N/A,-,参数量/M,6.2626,N/A,代码计算(thop),2026-06-02,含VCA+GARC
 EXP-004,参数量验证,VCA模块,N/A,-,参数量/M,0.0172,N/A,代码计算(thop),2026-06-02,VisibilityConditionedCoAAdapter(128)
 EXP-004,参数量验证,GARC模块,N/A,-,参数量/M,0.000016,N/A,代码计算(thop),2026-06-02,GlareAwareResidualCalibrator
-EXP-004,参数量验证,VCA+GARC增量,N/A,-,参数量/M,0.0172,N/A,代码计算(thop),2026-06-02,论文声称~0.05-0.06M
-EXP-004,FLOPs验证,Student(res_blocks=1),N/A,-,FLOPs/G(1080p估计),88.5,N/A,代码计算(thop@256x256缩放),2026-06-02,论文声称48.7G；差距82%
-EXP-004,FLOPs验证,LUCIDMine(res_blocks=1),N/A,-,FLOPs/G(1080p估计),88.7,N/A,代码计算(thop@256x256缩放),2026-06-02,论文声称49.6G；差距79%
-EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_full_psnr/dB,23.47,N/A,experiment/RealAdapt/R008日志,已完成,注意：非LUCIDMine架构；val集非test集
-EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_full_ssim,0.874,N/A,experiment/RealAdapt/R008日志,已完成,与论文声称LUCIDMine SSIM=0.956差距明显（不同条件）
-EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_masked_l1,0.0557,N/A,experiment/RealAdapt/R008日志,已完成,masked L1（带reliability mask）
-EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需LUCIDMine微调权重+测试集
-EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,SSIM,未运行,N/A,待运行,N/A,同上
-EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,MAE,未运行,N/A,待运行,N/A,同上
-EXP-009,经典基线评估,CLAHE,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集
-EXP-009,经典基线评估,DCP,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集+DCP实现
-EXP-009,经典基线评估,Retinex,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集+Retinex实现
-EXP-011,FPS测量,LUCIDMine,1080p输入,100次均值,FPS,未运行,N/A,待运行,N/A,需GPU(RTX 3090)
-EXP-011,FPS测量,Student,1080p输入,100次均值,FPS,未运行,N/A,待运行,N/A,需GPU
-EXP-012,消融实验,骨干基线,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需合成测试集
-EXP-012,消融实验,骨干+VCA,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需VCA-only权重+合成测试集
-EXP-012,消融实验,LUCIDMine,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需LUCIDMine微调权重
+EXP-005,已有训练日志,Student(R008 best),矿山验证集,-,val_full_psnr/dB,23.47,N/A,experiment/RealAdapt/R008日志,已完成,非LUCIDMine架构；val集非test集
+EXP-005,已有训练日志,Student(R008 best),矿山验证集,-,val_full_ssim,0.874,N/A,experiment/RealAdapt/R008日志,已完成,与论文声称0.956差距明显（不同条件）
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,PSNR/dB,18.908,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,target=RIDCP伪标签；非论文原始数据集
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,SSIM,0.7549,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,MAE,0.0920,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,PSNR/dB,18.071,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,clipLimit=2.0; 8x8
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,SSIM,0.7755,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,MAE,0.1049,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),Retinex(MSR),lucidmine-40-video test set,152,PSNR/dB,10.716,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,sigmas=(15,80,250) gain=125
+EXP-101,全参考评估(40视频测试集),Retinex(MSR),lucidmine-40-video test set,152,SSIM,0.2366,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),Retinex(MSR),lucidmine-40-video test set,152,MAE,0.2244,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),DCP,lucidmine-40-video test set,152,PSNR/dB,16.335,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,win=15 omega=0.95 t0=0.1
+EXP-101,全参考评估(40视频测试集),DCP,lucidmine-40-video test set,152,SSIM,0.6323,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),DCP,lucidmine-40-video test set,152,MAE,0.1336,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),Student(backbone无微调),lucidmine-40-video test set,152,PSNR/dB,18.783,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,直接zero-shot推理；无矿山微调
+EXP-101,全参考评估(40视频测试集),Student(backbone无微调),lucidmine-40-video test set,152,SSIM,0.7406,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),Student(backbone无微调),lucidmine-40-video test set,152,MAE,0.0995,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-102,Vis无参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,Vis,0.5261,N/A,experiment/eval/vis_summary.json,2026-06-02,min-max跨方法归一化
+EXP-102,Vis无参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,Vis,0.6562,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
+EXP-102,Vis无参考评估(40视频测试集),Retinex,lucidmine-40-video test set,152,Vis,0.3974,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
+EXP-102,Vis无参考评估(40视频测试集),DCP,lucidmine-40-video test set,152,Vis,0.7746,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
+EXP-102,Vis无参考评估(40视频测试集),Student(backbone无微调),lucidmine-40-video test set,152,Vis,0.6916,N/A,experiment/eval/vis_summary.json,2026-06-02,同上
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,PSNR/dB,待更新,N/A,待运行,2026-06-02,zero-gate初始化=与Student完全等价
+EXP-103,LUCIDMine推理(未微调),LUCIDMine(VCA/GARC未训练),lucidmine-40-video test set,152,SSIM,待更新,N/A,待运行,2026-06-02,同上
+EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,PSNR/dB,待Modal训练,N/A,待Modal训练完成,N/A,需Modal GPU训练
+EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,SSIM,待Modal训练,N/A,待Modal训练完成,N/A,同上
+EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,MAE,待Modal训练,N/A,待Modal训练完成,N/A,同上
+EXP-201,LUCIDMine微调后评估,LUCIDMine(100epoch fine-tuned),lucidmine-40-video test set,152,Vis,待Modal训练,N/A,待Modal训练完成,N/A,同上

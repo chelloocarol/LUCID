@@ -1,0 +1,57 @@
+{
+  "input": {
+    "contrast": 0.297595,
+    "entropy": 7.288134,
+    "dark_channel": 0.254177,
+    "glare": 0.013939,
+    "sharpness": 1306.520094,
+    "vis": 0.526121,
+    "psnr": 18.90842,
+    "ssim": 0.754905,
+    "mae": 0.092045
+  },
+  "clahe": {
+    "contrast": 0.463913,
+    "entropy": 7.433645,
+    "dark_channel": 0.198725,
+    "glare": 0.020495,
+    "sharpness": 3206.483185,
+    "vis": 0.656241,
+    "psnr": 18.071492,
+    "ssim": 0.775543,
+    "mae": 0.10493
+  },
+  "retinex": {
+    "contrast": 0.197631,
+    "entropy": 4.075726,
+    "dark_channel": 0.102424,
+    "glare": 7e-06,
+    "sharpness": 63.631288,
+    "vis": 0.397357,
+    "psnr": 10.71626,
+    "ssim": 0.236609,
+    "mae": 0.224437
+  },
+  "dcp": {
+    "contrast": 0.676451,
+    "entropy": 6.704324,
+    "dark_channel": 0.026098,
+    "glare": 0.011667,
+    "sharpness": 2122.47865,
+    "vis": 0.774642,
+    "psnr": 16.335455,
+    "ssim": 0.632256,
+    "mae": 0.133628
+  },
+  "student": {
+    "contrast": 0.53788,
+    "entropy": 6.983541,
+    "dark_channel": 0.093856,
+    "glare": 0.005004,
+    "sharpness": 1137.3084,
+    "vis": 0.6916,
+    "psnr": 18.782538,
+    "ssim": 0.740615,
+    "mae": 0.099462
+  }
+}
