@@ -26,8 +26,12 @@ def get_overall_metrics(data):
     # Prefer test-split metrics when available (eval may use split=None covering all records)
     if "by_split" in data and "test" in data["by_split"]:
         o = data["by_split"]["test"]
-        n = sum(1 for k in data.get("by_split_video", {}) if k.startswith("test/"))
-        print(f"  Using test-split metrics (n={n} pairs)")
+        # Count pairs via video_metadata (by_split_video values are already reduced floats)
+        vm = data.get("video_metadata", {})
+        n = sum(vm[k.split("/", 1)[1]]["pair_count"]
+                for k in data.get("by_split_video", {})
+                if k.startswith("test/") and k.split("/", 1)[1] in vm)
+        print(f"  Using test-split metrics (n={n} pairs, {sum(1 for k in data.get('by_split_video',{}) if k.startswith('test/'))} videos)")
     else:
         o = data["overall"]
         n = 152
@@ -71,10 +75,10 @@ def update_reproduction_csv(csv_path, exp_id, method_name, metrics):
     fieldnames = None
     with open(csv_path, encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
-        fieldnames = reader.fieldnames
+        fieldnames = [f for f in reader.fieldnames if f is not None]  # strip trailing None
         for row in reader:
             existing_keys.add((row["实验编号"], row["指标"]))
-            rows.append(row)
+            rows.append({k: v for k, v in row.items() if k is not None})
 
     new_rows = [
         ("PSNR/dB", f"{metrics['psnr']:.6f}"),
