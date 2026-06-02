@@ -23,12 +23,20 @@ def load_eval_json(path):
 
 
 def get_overall_metrics(data):
-    o = data["overall"]
+    # Prefer test-split metrics when available (eval may use split=None covering all records)
+    if "by_split" in data and "test" in data["by_split"]:
+        o = data["by_split"]["test"]
+        n = sum(1 for k in data.get("by_split_video", {}) if k.startswith("test/"))
+        print(f"  Using test-split metrics (n={n} pairs)")
+    else:
+        o = data["overall"]
+        n = 152
+        print(f"  Using overall metrics (no test split found)")
     return {
         "psnr":  o["full_psnr"],
         "ssim":  o["full_ssim"],
         "mae":   o["masked_l1"],
-        "n": 152,
+        "n": n if n > 0 else 152,
     }
 
 
@@ -207,7 +215,7 @@ def update_paper_claims_audit(md_path, metrics):
 
 def print_summary(metrics):
     print("\n" + "="*60)
-    print("EXP-201 LUCIDMine 评估结果（代理集，n=152，RIDCP伪标签）")
+    print(f"EXP-201 LUCIDMine 评估结果（代理集 test split，n={metrics['n']}，RIDCP伪标签）")
     print("="*60)
     print(f"  full_psnr  : {metrics['psnr']:.4f} dB  (论文声明: 23.42 dB)")
     print(f"  full_ssim  : {metrics['ssim']:.4f}      (论文声明: 0.956)")
