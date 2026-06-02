@@ -70,9 +70,15 @@ Sfinal = clip(1 + γG · S · M, 0.55, 1.45)
 
 **原文现状**: 论文声明 PSNR=23.42、SSIM=0.956 等指标，但仓库中无对应的 LUCIDMine 微调权重
 
+**现状更新（2026-06-02）**:
+- ✅ LUCIDMine 权重已通过本次审查生成（Modal A10G，best@ep48，代理集 val_psnr=23.14 dB）
+- ⚠️ 生成的权重使用 40 视频 RIDCP 伪标签数据集，**非论文原始 288 对真实配对数据集**
+- ❌ 论文原始训练权重（在真实 1920 对数据集上微调）仍未在仓库中提供
+
 **修改建议**：
-- 在论文实验设置章节（§3）补充："模型权重、评估脚本和数据集清单见 [GitHub链接]"
-- 上传微调完成的 LUCIDMine 权重（含VCA/GARC 参数），并在 weights/README.md 中说明
+- 将论文原始微调权重上传至仓库 `weights/LUCIDMine.pth`，并在 `weights/README.md` 说明
+- 在论文 §3 补充："完整评估代码见 `tools/eval_mine_per_video.py`，模型权重见 [GitHub链接]"
+- 若原始权重无法公开，在 README 中说明权重申请途径
 
 ### M5. 合成压力测试集来源说明
 
