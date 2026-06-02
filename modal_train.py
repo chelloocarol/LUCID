@@ -88,7 +88,7 @@ def train():
             sys.executable, "/workspace/LUCID/train_lucidmine.py",
             "--manifest",      manifest_out,
             "--init_ckpt",     "/workspace/LUCID/weights/Student.pth",
-            "--exp_name",      "lucidmine_modal",
+            "--exp_name",      "lucidmine_modal_v2",
             "--exp_dir",       VOLUME_PATH,
             "--warmup_epochs", "20",
             "--adapt_epochs",  "80",
@@ -101,21 +101,21 @@ def train():
 
     volume.commit()
     print("Training complete. Checkpoints in Modal volume 'lucidmine-checkpoints'.")
-    return f"{VOLUME_PATH}/lucidmine_modal/best.pth"
+    return f"{VOLUME_PATH}/lucidmine_modal_v2/best.pth"
 
 
 @app.local_entrypoint()
 def main():
-    print("Submitting LUCIDMine training to Modal (A10G GPU) ...")
+    print("Submitting LUCIDMine training (v2, SSIM fp32 fix) to Modal (A10G GPU) ...")
     result = train.remote()
     print(f"Job complete. Best checkpoint: {result}")
 
     # Download checkpoints locally
-    os.makedirs("experiment/LUCIDMine/modal_run", exist_ok=True)
+    os.makedirs("experiment/LUCIDMine/modal_run_v2", exist_ok=True)
     for fname in ("best.pth", "last.pth"):
         cmd = ["modal", "volume", "get",
-               "lucidmine-checkpoints", f"lucidmine_modal/{fname}",
-               f"experiment/LUCIDMine/modal_run/{fname}"]
+               "lucidmine-checkpoints", f"lucidmine_modal_v2/{fname}",
+               f"experiment/LUCIDMine/modal_run_v2/{fname}"]
         import subprocess
         subprocess.run(cmd, check=False)
-    print("Downloaded to experiment/LUCIDMine/modal_run/")
+    print("Downloaded to experiment/LUCIDMine/modal_run_v2/")
