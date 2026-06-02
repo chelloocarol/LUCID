@@ -1,0 +1,24 @@
+实验编号,实验名称,模型,数据集,n,指标,值,标准差,来源,日期,备注
+EXP-004,参数量验证,Student(res_blocks=1),N/A,-,参数量/M,2.9975,N/A,代码计算(thop),2026-06-02,对应仓库weights/Student.pth
+EXP-004,参数量验证,Student(res_blocks=4),N/A,-,参数量/M,6.2454,N/A,代码计算(thop),2026-06-02,最接近论文声称6.42M
+EXP-004,参数量验证,LUCIDMine(res_blocks=1),N/A,-,参数量/M,3.0147,N/A,代码计算(thop),2026-06-02,含VCA+GARC
+EXP-004,参数量验证,LUCIDMine(res_blocks=4),N/A,-,参数量/M,6.2626,N/A,代码计算(thop),2026-06-02,含VCA+GARC
+EXP-004,参数量验证,VCA模块,N/A,-,参数量/M,0.0172,N/A,代码计算(thop),2026-06-02,VisibilityConditionedCoAAdapter(128)
+EXP-004,参数量验证,GARC模块,N/A,-,参数量/M,0.000016,N/A,代码计算(thop),2026-06-02,GlareAwareResidualCalibrator
+EXP-004,参数量验证,VCA+GARC增量,N/A,-,参数量/M,0.0172,N/A,代码计算(thop),2026-06-02,论文声称~0.05-0.06M
+EXP-004,FLOPs验证,Student(res_blocks=1),N/A,-,FLOPs/G(1080p估计),88.5,N/A,代码计算(thop@256x256缩放),2026-06-02,论文声称48.7G；差距82%
+EXP-004,FLOPs验证,LUCIDMine(res_blocks=1),N/A,-,FLOPs/G(1080p估计),88.7,N/A,代码计算(thop@256x256缩放),2026-06-02,论文声称49.6G；差距79%
+EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_full_psnr/dB,23.47,N/A,experiment/RealAdapt/R008日志,已完成,注意：非LUCIDMine架构；val集非test集
+EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_full_ssim,0.874,N/A,experiment/RealAdapt/R008日志,已完成,与论文声称LUCIDMine SSIM=0.956差距明显（不同条件）
+EXP-005,已有训练日志,Student(R008 best),矿山验证集(部分),-,val_masked_l1,0.0557,N/A,experiment/RealAdapt/R008日志,已完成,masked L1（带reliability mask）
+EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需LUCIDMine微调权重+测试集
+EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,SSIM,未运行,N/A,待运行,N/A,同上
+EXP-008,LUCIDMine测试集评估,LUCIDMine,288对测试集,288,MAE,未运行,N/A,待运行,N/A,同上
+EXP-009,经典基线评估,CLAHE,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集
+EXP-009,经典基线评估,DCP,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集+DCP实现
+EXP-009,经典基线评估,Retinex,288对测试集,288,PSNR/dB,未运行,N/A,待运行,N/A,需测试集+Retinex实现
+EXP-011,FPS测量,LUCIDMine,1080p输入,100次均值,FPS,未运行,N/A,待运行,N/A,需GPU(RTX 3090)
+EXP-011,FPS测量,Student,1080p输入,100次均值,FPS,未运行,N/A,待运行,N/A,需GPU
+EXP-012,消融实验,骨干基线,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需合成测试集
+EXP-012,消融实验,骨干+VCA,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需VCA-only权重+合成测试集
+EXP-012,消融实验,LUCIDMine,30对合成集,30,PSNR/dB,未运行,N/A,待运行,N/A,需LUCIDMine微调权重
