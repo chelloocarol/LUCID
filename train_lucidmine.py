@@ -135,11 +135,13 @@ def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn
             with torch.cuda.amp.autocast():
                 restored, feats = model(haze)
                 restored = restored.clamp(0, 1)
-                l1_l    = (restored - target).abs().mean()
-                ssim_l  = 1.0 - ssim_loss_fn(restored, target)
-                edge_l  = edge_loss_fn(restored, target)
-                # glare reg: need backbone_out (run student forward without adapter)
-                loss = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l
+                l1_l = (restored - target).abs().mean()
+                edge_l = edge_loss_fn(restored, target)
+            # SSIM and its backward must run in fp32 to avoid fp16 variance instability
+            restored_f32 = restored.float()
+            target_f32   = target.float()
+            ssim_l = 1.0 - ssim_loss_fn(restored_f32, target_f32)
+            loss = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
