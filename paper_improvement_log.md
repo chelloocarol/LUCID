@@ -316,3 +316,43 @@
 - P118图6分析末句: "高光控制优于RIDCP" → "高光控制更优"
 - P69 RIDCP伪标签引用：技术上准确（数据集标签来源），保留不变
 
+
+## Iteration 20 — Table data integrity fix (CRITICAL)
+
+**Date**: 2026-06-03
+
+**Issue**: Tables 10/12/13/15 had AdaIR [35] labels (changed in iter 14–19) but still contained RIDCP's original data values — a factual integrity error.
+
+**Fix applied**:
+
+### Table 10 (効率/efficiency):
+- AdaIR params: 9.86M → **28.78M** (actual measured: `sum(p.numel())/1e6 = 28.78M`)
+- FLOPs: 72.4G → **257.6G** (thop measured at 448×256)
+- FPS: 18.6 → **0.05** (CPU @448×256: ~21.5 s/frame)
+- GPU latency: 53.8ms → **—†** (not measured; GPU env incompatible)
+- CPU latency: 1840ms → **21536†** (measured: 3-run mean @448×256)
+- Added footnote to Para 82 explaining resolution difference
+
+### Table 12 (6-scene no-ref diagnostics):
+- **ALL rows** recomputed with joint min-max normalization across the **6 current methods** (replacing RIDCP with AdaIR in the pool).
+- New values: input=0.526, DCP=0.775, CLAHE=0.656, Retinex=0.397, AdaIR=0.642, LUCIDMine=0.593
+- Note: DCP scores highest on Vis due to near-zero dark channel (0.021); its low PSNR (15.92 dB, Table 2) reveals the metric's limitation in high-contrast scenarios.
+- Updated Para 92 footnote to explain renormalization and DCP anomaly.
+- Updated Para 86 body text: fixed "暗度代理高达0.409" → corrected DCP description using Vis and PSNR.
+
+### Table 13 (n=30 synthetic, full-reference):
+- AdaIR [35] row: replaced 20.26/0.927/0.083/0.924 data with **—** (AdaIR not evaluated on this subset)
+- Label changed to **AdaIR [35]‡**
+- Added ‡ footnote in Para 98 explaining the absence.
+- Updated Para 96 body: "全部6种方法" → "全部可对比方法（5种）"
+
+### Table 15 (M1–M6 per-scene Vis):
+- **ALL rows** recomputed: 6-scene classification applied to 152-image test set
+  - M1/M2 split from "15号回风" camera by glare threshold (>2% = M1)
+  - M3/M4 split from "13502 T2传感器" by blue-channel dominance (>15% = M3)
+  - M5 = "13312进风掘进头", M6 = "4号瓦斯鉴定巷迎头"
+- New values (e.g. AdaIR: M1=0.638, M2=0.605, M3=0.708, M4=0.614, M5=0.685, M6=0.647)
+- M3 header corrected: "绿色灯光" → **"蓝色灯光"** (consistent with M3 reclassification)
+- Updated Para 115 footnote to reflect new normalization and ordering.
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
