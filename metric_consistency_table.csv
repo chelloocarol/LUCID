@@ -61,3 +61,7 @@
 §4.7,表6,LUCIDMine,M4仪表雾化Vis,0.922,缺少实验支撑,-,-,缺少实验支撑,待验证,需M4场景图像
 §4.7,表6,LUCIDMine,M5顶板纹理Vis,0.941,缺少实验支撑,-,-,缺少实验支撑,待验证,需M5场景图像
 §4.7,表6,LUCIDMine,M6机械扬尘Vis,0.932,缺少实验支撑,-,-,缺少实验支撑,待验证,需M6场景图像
+新增对比,表2(替代RIDCP),AdaIR(ICLR2025),PSNR↑/dB,N/A(新增替代方法),待EXP-202,-,-,待EXP-202,是（建议替代RIDCP）,adair-single-dehaze.ckpt；448×256评估；户外去雾方法在煤矿场景表现有限
+新增对比,表2(替代RIDCP),AdaIR(ICLR2025),SSIM↑,N/A(新增替代方法),待EXP-202,-,-,待EXP-202,是（建议替代RIDCP）,同上
+新增对比,表2(替代RIDCP),AdaIR(ICLR2025),MAE↓,N/A(新增替代方法),待EXP-202,-,-,待EXP-202,是（建议替代RIDCP）,同上
+新增对比,表2(替代RIDCP),AdaIR(ICLR2025),Vis↑,N/A(新增替代方法),待EXP-202,-,-,待EXP-202,是（建议替代RIDCP）,同上

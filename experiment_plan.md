@@ -1,7 +1,8 @@
 # 补实验计划 (Experiment Plan)
 
 **生成日期**: 2026-06-02  
-**状态**: 第一轮最小补实验计划
+**最后更新**: 2026-06-03  
+**状态**: 第一轮最小补实验计划（已完成EXP-101~203；AdaIR EXP-202进行中）
 
 ---
 
@@ -11,13 +12,13 @@
 
 ### 必须项（不可缺少）
 
-- [ ] **LUCIDMine 微调权重**：需要在矿山数据上微调后的完整LUCIDMine权重（含VCA/GARC参数）
-- [ ] **矿山配对测试集（288对）**：`D:\ARIS\COA\mine_research\data\` 中的测试集，或等价数据
-- [ ] **manifest CSV文件**：包含 input_path, target_path, mask_path, split, video, stem 字段
+- [✅] **LUCIDMine 微调权重**：Modal A10G 训练完成，best.pth (epoch 48)，val_psnr=23.14 dB
+- [🔴] **矿山配对测试集（288对）**：**不存在**（作者确认未保存）；代理集(n=152)为最终评估基准
+- [✅] **manifest CSV文件**：data/mine_manifest.csv 已生成
 
 ### 可选但推荐
 
-- [ ] **chellocarol/lucidmine-40-video-dataset**：40视频数据集（可从GitHub获取）
+- [✅] **chellocarol/lucidmine-40-video-dataset**：已访问（GitHub），n=152 test pairs
 - [ ] **RIDCP代码和权重**：用于对比实验
 - [ ] **合成压力测试集（30对）**：用于消融实验
 - [ ] **GPU环境（推荐NVIDIA RTX 3090）**：用于FPS/时延测量
