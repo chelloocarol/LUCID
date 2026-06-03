@@ -386,3 +386,11 @@
 **Fix**: Changed "PSNR（代理集+2.41 dB）" → **"PSNR（代理集+2.71 dB）"** in Para 6.
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+## Iteration 24 — Clarify ambiguous Vis weight description in §3 (Para 76)
+
+**Issue**: Para 76 stated "暗度抑制、眩光抑制与锐度各占20%和15%" — this is ambiguous: it groups three items (w3, w4, w5) under "20%和15%", making it unclear which gets 20% vs 15%.
+
+**Fix**: Changed to **"暗度抑制占20%（w3 = 0.20），眩光抑制与锐度各占15%（w4 = w5 = 0.15）"** — now unambiguously assigns 20% to darkness suppression and 15% each to glare and sharpness.
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
