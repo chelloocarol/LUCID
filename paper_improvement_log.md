@@ -378,3 +378,11 @@
 **Fix**: Changed "绿色信号灯照明（M3）" → **"蓝色信号灯照明（M3）"** in Para 20.
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+## Iteration 23 — Fix stale PSNR gain in Abstract
+
+**Issue**: Abstract (Para 6) still contained "PSNR（代理集+2.41 dB）" while the rest of the paper (Paras 85, 88, 129) was already updated to +2.71 dB in Iteration 21.
+
+**Fix**: Changed "PSNR（代理集+2.41 dB）" → **"PSNR（代理集+2.71 dB）"** in Para 6.
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
