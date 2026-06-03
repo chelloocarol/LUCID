@@ -356,3 +356,17 @@
 - Updated Para 115 footnote to reflect new normalization and ordering.
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+## Iteration 21 — Fix stale LUCIDMine vs AdaIR comparison numbers
+
+**Issue**: Body text in §4.2 (Para 85, 86), Table 2 note (Para 88), §4.4 (Para 96), and §6 Conclusion (Para 129) used stale proxy-dataset figures from an earlier draft that didn't match Table 2's authoritative values.
+
+- Stale PSNR gain: 2.41 dB → **2.71 dB** (23.42 − 20.71)
+- Stale endpoint PSNR: 23.12 → **23.42 dB** (Table 2 authoritative)
+- Stale SSIM gain: 0.171 (0.734→0.905) → **0.222 (0.734→0.956)**
+- Stale MAE reduction: 0.017 (0.076→0.059) → **0.019 (0.076→0.057)**
+- Para 96: "全部6种方法" → "全部可对比方法（AdaIR未在本子集评测，不纳入排名）"
+
+**Locations fixed**: Paragraphs 85, 86, 88, 96, 129.
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
