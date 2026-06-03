@@ -1,0 +1,13 @@
+{
+  "method": "AdaIR-single-dehaze",
+  "eval_resolution": "448x256",
+  "n": 59,
+  "missing": 0,
+  "full_psnr": 19.862449359119605,
+  "full_ssim": 0.6982565522193909,
+  "masked_l1": 0.0816507185414686,
+  "psnr_std": 0.861683832122126,
+  "ssim_std": 0.04494284838438034,
+  "mae_std": 0.007086428088925518,
+  "note": "Evaluated at 448x256 (CPU inference limit). Targets resized from 1920x1088. Not directly comparable to other methods evaluated at full resolution. AdaIR trained on standard dehazing benchmarks (SOTS), not coal mine domain."
+}
