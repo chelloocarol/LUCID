@@ -16,3 +16,9 @@ EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152
 EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,PSNR/dB,23.013585,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
 EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,SSIM,0.843842,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
 EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,MAE,0.063533,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
+EXP-203,全方法Vis联合评估,input,lucidmine-40-video test set,152,Vis,0.526121,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,CLAHE,lucidmine-40-video test set,152,Vis,0.656241,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,Retinex,lucidmine-40-video test set,152,Vis,0.397357,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,DCP,lucidmine-40-video test set,152,Vis,0.774642,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,Student(骨干基线零样本),lucidmine-40-video test set,152,Vis,0.691600,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,LUCIDMine(ep48 微调后),lucidmine-40-video test set,152,Vis,0.593022,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)；训练匹配RIDCP伪标签导致sharpness下降
