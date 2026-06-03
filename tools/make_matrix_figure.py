@@ -13,7 +13,7 @@ CELL_W      = 370       # px per image cell
 CELL_H      = 208       # px per image cell (≈ 16:9)
 GAP         = 3         # gap between cells (px)
 HEADER_H    = 46        # column header row height
-ROW_LABEL_W = 128       # left gutter for scene labels
+ROW_LABEL_W = 0         # no row labels
 BORDER      = 10        # outer white border
 BG          = (255, 255, 255)
 
@@ -22,9 +22,8 @@ SCENES = [
     "Dust Scattering",
     "Miner Scene",
     "Instrument Haze",
-    "Glare Saturation",
 ]
-IDS    = ["221", "223", "224", "225", "226"]
+IDS    = ["221", "223", "224", "225"]
 
 METHODS = [
     ("Input",            False),
@@ -160,15 +159,6 @@ def build():
     # ── rows ──────────────────────────────────────────────────────────────
     for ri, (scene, img_id) in enumerate(zip(SCENES, IDS)):
         y0_cell = BORDER + HEADER_H + ri * (CELL_H + GAP)
-
-        # row label gutter
-        lx0 = BORDER
-        lx1 = BORDER + ROW_LABEL_W - GAP
-        ly1 = y0_cell + CELL_H
-        draw.rectangle([lx0, y0_cell, lx1, ly1], fill=ROW_LABEL_BG)
-        # thin right border
-        draw.line([(lx1, y0_cell), (lx1, ly1)], fill=SEPARATOR_CLR, width=1)
-        draw_text_centred_rotated(canvas, scene, (lx0, y0_cell, lx1, ly1), f_lbl, ROW_LABEL_FG)
 
         # image cells
         for ci, (mname, _) in enumerate(METHODS):
