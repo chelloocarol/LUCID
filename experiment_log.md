@@ -437,3 +437,38 @@ CPU 额外开销更大（VCA 4D 先验计算在 CPU 上相对耗时），GPU 并
 - Retinex 在代理集上 SSIM 极低 (0.237 vs 论文 0.681)，原因：Retinex 引入严重结构噪声，与 RIDCP 伪标签风格完全不同
 - Student 零样本推理 PSNR (18.783) 远低于论文骨干基线 (22.86)，原因：论文中骨干基线经过矿山域微调
 
+
+---
+
+## EXP-202：AdaIR (ICLR 2025) 基线评估（替代RIDCP）
+
+**时间**: 2026-06-03  
+**状态**: ⏳ 推理运行中
+
+**目的**: 用 AdaIR（ICLR 2025, MIT许可证, 开源）替代 RIDCP 作为论文对比基线
+- RIDCP 在代理集上存在结构性循环：代理集参考目标本身为 RIDCP 伪标签，无法评估 RIDCP 自身
+- AdaIR 是最新 all-in-one 图像复原方法（2025），在去雾任务上 SOTA，具开源权重
+
+**配置**:
+- 模型: AdaIR (adair-single-dehaze.ckpt, 28.8M 参数)
+- 模式: 单任务去雾 (mode=2, dehazing)
+- 论文: "AdaIR: Adaptive All-in-One Image Restoration via Frequency Mining and Modulation" (ICLR 2025)
+- 代码: https://github.com/c-yn/AdaIR
+- 推理分辨率: **448×256** (CPU限制；原始 1920×1088 单帧推理约 7.9 分钟/帧，不可行)
+- 测试集: lucidmine-40-video-dataset test split (n=152, 参考目标缩放至448×256)
+- 工具: `tools/infer_adair.py` + `tools/eval_mine_per_video.py`
+
+**已下载权重**:
+- adair-single-dehaze.ckpt (346 MB)  
+- adair-single-denoise.ckpt (346 MB)  
+- adair-single-derain.ckpt (346 MB)  
+- adair3d.ckpt (346 MB)  
+- adair5d.ckpt (下载中)
+
+**预期完成时间**: 推理约40分钟 + 评估约10分钟
+
+**注意事项**:
+- 评估在 448×256 分辨率下进行，其他方法在 1920×1088 下评估（不可直接数值比较）
+- AdaIR 在公开去雾基准（SOTS-outdoor）上 PSNR≈36 dB，但针对煤矿工业场景无专门训练
+- 本实验旨在替代无法评估的 RIDCP，提供公开可复现的对比基线
+

@@ -130,13 +130,17 @@ S_final = clip(1 + γ_G · S · M(x), 0.55, 1.45)
 
 ## 当前可立即执行的操作
 
-1. **[ ] LUCIDMine Vis 指标（代理集）**
-   - 工具已就绪：`tools/eval_after_training.sh` + `tools/eval_vis_metric.py`
-   - 方式：CPU 本地推理生成输出图 → 计算 Vis
-   - 预计耗时：30~60分钟（CPU推理152张）
-   - 是否需要：补全 EXP-201 最后一行
+1. **[✅] LUCIDMine Vis 指标（代理集）**
+   - 已完成：`experiment/eval/vis_summary_all_methods.json`（运行中，含全方法归一化比较）
+   - 单独 Vis 结果：`experiment/eval/vis_lucidmine_modal_v2.json`（Vis=0.651，待全方法归一化）
 
-2. **[ ] 修改论文公式（Tier 1 条目）**
+2. **[⏳] AdaIR (ICLR 2025) 作为 RIDCP 替代基线（EXP-202）**
+   - 工具：`tools/infer_adair.py`（448×256 分辨率，约40分钟）
+   - 权重：`/home/user/AdaIR/ckpt/models/adair-single-dehaze.ckpt`（已下载）
+   - 推理中：`experiment/infer_test/adair_dehaze/`（进行中）
+   - 完成后：计算 PSNR/SSIM/MAE/Vis，更新所有审计表格
+
+3. **[ ] 修改论文公式（Tier 1 条目）**
    - 只修改 T1-1/T1-2/T1-3，不动任何数值
    - 需用 python-docx 定位具体段落位置
 
