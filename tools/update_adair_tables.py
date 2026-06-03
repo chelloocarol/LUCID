@@ -153,7 +153,9 @@ def print_final_summary(adair, lowres):
     print(f"  {'Method':<30} {'PSNR':>8} {'SSIM':>8} {'MAE':>8} {'Vis':>8}")
     print(f"  {'-'*64}")
     for m, r in lowres.get("methods", {}).items():
-        print(f"  {m:<30} {r['psnr']:>8.4f} {r['ssim']:>8.4f} {r['mae']:>8.4f} {r.get('vis', float('nan')):>8.4f}")
+        vis_val = r.get('vis')
+        vis_str = f"{vis_val:>8.4f}" if vis_val is not None else "     N/A"
+        print(f"  {m:<30} {r['psnr']:>8.4f} {r['ssim']:>8.4f} {r['mae']:>8.4f} {vis_str}")
     print("=" * 65)
 
 
@@ -166,6 +168,11 @@ def main():
 
     with open(args.adair_json, encoding="utf-8") as f:
         adair = json.load(f)
+
+    # Normalize keys: adair_eval.json uses full_psnr/full_ssim/masked_l1
+    adair.setdefault("psnr", adair.get("full_psnr", 0.0))
+    adair.setdefault("ssim", adair.get("full_ssim", 0.0))
+    adair.setdefault("mae", adair.get("masked_l1", 0.0))
 
     lowres = {}
     if os.path.exists(args.lowres_json):
