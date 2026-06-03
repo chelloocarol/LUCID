@@ -370,3 +370,11 @@
 **Locations fixed**: Paragraphs 85, 86, 88, 96, 129.
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+## Iteration 22 — Fix M3 scene color label in §1 contribution bullet
+
+**Issue**: Paragraph 20 (§1 Intro, contribution bullet 4) described M3 as "绿色信号灯照明（M3）" while all other references in the paper (Para 69, 94, 115, Table 15 header) consistently use "蓝色灯光" / "蓝色信号灯照明" for M3.
+
+**Fix**: Changed "绿色信号灯照明（M3）" → **"蓝色信号灯照明（M3）"** in Para 20.
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
