@@ -22,3 +22,6 @@ EXP-203,全方法Vis联合评估,Retinex,lucidmine-40-video test set,152,Vis,0.3
 EXP-203,全方法Vis联合评估,DCP,lucidmine-40-video test set,152,Vis,0.774642,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
 EXP-203,全方法Vis联合评估,Student(骨干基线零样本),lucidmine-40-video test set,152,Vis,0.691600,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
 EXP-203,全方法Vis联合评估,LUCIDMine(ep48 微调后),lucidmine-40-video test set,152,Vis,0.593022,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)；训练匹配RIDCP伪标签导致sharpness下降
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,PSNR/dB,20.711931,1.6910599587443482,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,SSIM,0.733972,0.05674680322408676,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,MAE,0.075835,0.016785854726612526,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256
