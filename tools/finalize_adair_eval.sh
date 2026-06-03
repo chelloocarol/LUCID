@@ -64,6 +64,13 @@ print(f"AdaIR (n={adair['n']}): PSNR={adair['full_psnr']:.4f}, SSIM={adair['full
 PYEOF
 
 echo ""
+echo "=== Step 2b: Joint Vis for all methods at 448x256 (including AdaIR) ==="
+python3 tools/eval_all_methods_lowres.py \
+    --target_dir /home/user/lucidmine-40-video-dataset/data/test/target \
+    --eval_size 448 256 \
+    --output_json experiment/eval/comparison_lowres_448x256.json
+
+echo ""
 echo "=== Step 3: Update all audit tables ==="
 python3 tools/update_adair_tables.py \
     --adair_json experiment/eval/adair_eval.json \

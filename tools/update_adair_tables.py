@@ -124,8 +124,8 @@ def update_summary_md(md_path, adair):
     with open(md_path, encoding="utf-8") as f:
         content = f.read()
 
-    old = "| AdaIR (ICLR 2025) | ⏳ EXP-202 推理中 |"
-    new = f"| **AdaIR (ICLR 2025, 448×256)** | **⏳ EXP-202 Vis待计算** |"
+    old = "| **AdaIR (ICLR 2025, 448×256)** | ⏳ EXP-202 推理中 |"
+    new = f"| **AdaIR (ICLR 2025, 448×256)** | ✅ EXP-202完成 |"
     if old in content:
         content = content.replace(old, new)
 
@@ -186,8 +186,83 @@ def main():
     update_experiment_log(os.path.join(ROOT, "experiment_log.md"), adair)
     add_adair_to_reproduction_csv(os.path.join(ROOT, "reproduction_results.csv"), adair)
     update_summary_md(os.path.join(ROOT, "experiment/eval/summary_40video_test.md"), adair)
+    update_audit_final_summary(os.path.join(ROOT, "AUDIT_FINAL_SUMMARY.md"), adair, lowres)
+    update_metric_consistency_csv(os.path.join(ROOT, "metric_consistency_table.csv"), adair, lowres)
 
     print("\n✅ All tables updated for EXP-202 AdaIR.")
+
+
+def update_metric_consistency_csv(csv_path, adair, lowres):
+    """Update metric_consistency_table.csv: fill in AdaIR placeholder rows."""
+    with open(csv_path, encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        fieldnames = [fn for fn in reader.fieldnames if fn is not None]
+        rows = [{k: v for k, v in r.items() if k is not None} for r in reader]
+
+    adair_vis = None
+    if lowres.get("methods", {}).get("AdaIR(ICLR2025)", {}).get("vis") is not None:
+        adair_vis = lowres["methods"]["AdaIR(ICLR2025)"]["vis"]
+
+    metric_vals = {
+        "PSNR↑/dB": (f"{adair['psnr']:.4f}", f"{adair['psnr']:.4f}(实测448×256)", "-", "-"),
+        "SSIM↑":    (f"{adair['ssim']:.4f}", f"{adair['ssim']:.4f}(实测448×256)", "-", "-"),
+        "MAE↓":     (f"{adair['mae']:.4f}",  f"{adair['mae']:.4f}(实测448×256)", "-", "-"),
+        "Vis↑":     (f"{adair_vis:.4f}" if adair_vis else "N/A",
+                     f"{adair_vis:.4f}(实测448×256,联合归一化)" if adair_vis else "N/A", "-", "-"),
+    }
+
+    changed = 0
+    for row in rows:
+        if row.get("方法名称") == "AdaIR(ICLR2025)" and "待EXP-202" in row.get("复现实验值", ""):
+            m = row.get("指标名称", "")
+            if m in metric_vals:
+                val, rep_val, diff, rel_err = metric_vals[m]
+                row["论文声明值"] = "N/A(新增替代方法)"
+                row["复现实验值"] = rep_val
+                row["差值"] = diff
+                row["相对误差"] = rel_err
+                row["是否一致"] = "✅(新增)"
+                row["是否建议修改"] = "是（建议替代RIDCP）"
+                changed += 1
+
+    with open(csv_path, "w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f"  Updated {changed} AdaIR rows in metric_consistency_table.csv")
+
+
+def update_audit_final_summary(md_path, adair, lowres):
+    """Update AUDIT_FINAL_SUMMARY.md with final AdaIR results."""
+    with open(md_path, encoding="utf-8") as f:
+        content = f.read()
+
+    # Replace placeholder AdaIR row in section 2.3
+    old = "| AdaIR (ICLR 2025) | ~19.9 | ~0.70 | ~0.082 |"
+    adair_vis = None
+    if lowres.get("methods", {}).get("AdaIR(ICLR2025)", {}).get("vis") is not None:
+        adair_vis = lowres["methods"]["AdaIR(ICLR2025)"]["vis"]
+    vis_str = f"{adair_vis:.3f}" if adair_vis is not None else "N/A"
+    new = f"| **AdaIR (ICLR 2025)** | **{adair['psnr']:.2f}** | **{adair['ssim']:.3f}** | **{adair['mae']:.3f}** |"
+    if old in content:
+        content = content.replace(old, new)
+        print("  Updated AdaIR row in AUDIT_FINAL_SUMMARY.md §2.3")
+
+    # Replace partial results note
+    old_note = "> AdaIR 部分结果（n≈60）：PSNR=19.86, SSIM=0.698, MAE=0.082；最终结果待全152张完成"
+    new_note = f"> AdaIR 最终结果（n={adair['n']}，448×256，adair-single-dehaze.ckpt）：PSNR={adair['psnr']:.4f}，SSIM={adair['ssim']:.4f}，MAE={adair['mae']:.4f}，Vis={vis_str}"
+    if old_note in content:
+        content = content.replace(old_note, new_note)
+
+    # Update remaining tasks: AdaIR done
+    old_task = "| 完成 AdaIR 152张推理 + 最终评估 | 推理进行中（~152张） | 🔴 进行中 |"
+    new_task = f"| 完成 AdaIR 152张推理 + 最终评估 | EXP-202完成：PSNR={adair['psnr']:.4f}，SSIM={adair['ssim']:.4f} | ✅ 完成 |"
+    if old_task in content:
+        content = content.replace(old_task, new_task)
+
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(content)
+    print("  Updated AUDIT_FINAL_SUMMARY.md")
 
 
 if __name__ == "__main__":
