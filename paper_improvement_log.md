@@ -425,3 +425,27 @@
 
 ### Score justification:
 Paper is theoretically sound with strong full-reference results, but claim-evidence alignment fails in §4.3/§4.7 (multiple values contradicted own tables). After Round 1 fixes, structural integrity restored → target Round 2 score: 7/10.
+
+---
+
+## Round 2 Comprehensive Review — Score: 7/10 (Accept)
+
+**Review date**: 2026-06-04  
+**Reviewer**: Fresh scan (Opus, no prior context)
+
+**Finding**: No critical numerical/structural defects remain. All table cross-references correct. Residual issues are redundancy and minor phrasing.
+
+### MAJOR fixes applied:
+
+1. **Para 13**: Removed duplicate AdaIR paragraph (second near-identical sentence repeated the first in different wording)
+2. **Para 125**: Fixed self-redundant "仍有提升空间...仍有改善空间"; updated glare value to 0.161 (Table 3 authoritative)
+3. **Abstract (Para 6)**: Added missing SSIM (+0.222) and MAE (−0.019) gain figures alongside PSNR
+
+### MINOR fixes applied:
+
+4. **Para 76**: Collapsed double weight statement to single compact form
+5. **Para 126**: Fixed misnomer "金属煤矿" → "金属矿山等" (coal mines ≠ metal mines)
+
+### Final score: **7/10 (Accept)**
+
+All critical and major structural/numerical issues resolved. Paper is ready for submission review pending author sign-off on Vis normalization disclosure and Table 13 AdaIR footnote.
