@@ -394,3 +394,15 @@
 **Fix**: Changed to **"暗度抑制占20%（w3 = 0.20），眩光抑制与锐度各占15%（w4 = w5 = 0.15）"** — now unambiguously assigns 20% to darkness suppression and 15% each to glare and sharpness.
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+## Iteration 25 — Fix contradictory no-ref Vis claim in §4.3 (Para 90)
+
+**Issue**: Para 90 claimed "LUCIDMine在六幅代表性场景上综合可见度代理Vis最高（0.909），锐度（0.028）亦最优" — directly contradicting the recomputed Table 12 (iter 20) where DCP has the highest Vis (0.775) and LUCIDMine is 0.593.
+
+**Fix**: Rewrote Para 90 to:
+- Acknowledge DCP's highest Vis (0.775) and explain it stems from over-enhancement (full-ref PSNR=15.92 dB)
+- State LUCIDMine Vis (0.593) as best among non-DCP methods
+- Updated sharpness 0.028→0.130, glare 0.014→0.161, overexposure 0.054→0.202 to match Table 12
+- Added mention of the DCP anomaly vs full-reference contrast
+
+**Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
