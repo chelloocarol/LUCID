@@ -406,3 +406,22 @@
 - Added mention of the DCP anomaly vs full-reference contrast
 
 **Files changed**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+---
+
+## Round 1 Comprehensive Review — Score: 6/10 (Weak Accept)
+
+**Review date**: 2026-06-04  
+**Reviewer**: Fresh scan (Opus, no prior context)
+
+### CRITICAL issues found and fixed (Iterations 26):
+
+1. **Abstract (Para 6)**: "综合可见度代理得分0.909" → "PSNR=23.42 dB, SSIM=0.956, MAE=0.057, Vis=0.931"; removed orphan "192幅图像 PSNR=21.87 dB" claim (no supporting table)
+2. **Para 90**: "Vis(0.593)在非DCP方法中最优" → corrected (CLAHE=0.656, AdaIR=0.642 both higher); removed false sharpness claim
+3. **Para 113**: Old RIDCP-era values (M5=0.941, M6=0.932, M2=0.878) replaced with actual Table 15 values; "AdaIR全场景Vis均低于LUCIDMine" → corrected (AdaIR beats LUCIDMine in 5/6 scenes on no-ref Vis)
+4. **Para 125**: Spurious "表6中0.926" → actual LUCIDMine M1=0.493
+5. **Table 5 (GARC eq)**: `clip(1 + γG·S, ...)` → `clip(1 + γG·S·M(x), ...)` — restored missing M(x) modulation term
+6. **Para 115 note**: "AdaIR M3最优(0.708)" → qualified as "non-DCP最高"; removed false M5 LUCIDMine > AdaIR claim
+
+### Score justification:
+Paper is theoretically sound with strong full-reference results, but claim-evidence alignment fails in §4.3/§4.7 (multiple values contradicted own tables). After Round 1 fixes, structural integrity restored → target Round 2 score: 7/10.
