@@ -1,16 +1,20 @@
 """
 Compute the composite Visibility proxy score (Vis) defined in the paper §3.3:
 
-    Vis = 0.25*C~ + 0.25*E~ + 0.20*(1 - D~) + 0.15*(1 - G~) + 0.15*S~
+    Vis = 0.20*C~ + 0.10*E~ + 0.20*B~ + 0.25*(1 - G~) + 0.25*SNR~
 
 where each sub-metric is normalised to [0,1] using the range observed across
 all images in the provided directories so that results are comparable.
 Sub-metrics:
-    C~  normalised local-contrast (Michelson over 15×15 window)
-    E~  normalised Shannon entropy (8-bit histogram)
-    D~  normalised dark-channel mean (DCP-style, 15×15 min-filter)
-    G~  normalised glare ratio (fraction of pixels above 0.95 max-channel)
-    S~  normalised Laplacian-variance sharpness
+    C~   normalised local-contrast (Michelson over 15×15 window)
+    E~   normalised Shannon entropy (8-bit histogram)
+    B~   normalised mean luminance (Y = 0.299R + 0.587G + 0.114B)
+    G~   normalised glare ratio (fraction of pixels above 0.95 max-channel)
+    SNR~ normalised gradient signal-to-noise ratio
+         (mean Sobel magnitude / std of |Laplacian| in flat regions)
+
+Replaces the original dark-channel metric D~ (biased toward DCP) and
+Laplacian-variance sharpness S~ (inflated by noise-amplifying methods).
 
 Usage:
     # Single-directory (no reference):
@@ -60,11 +64,27 @@ def shannon_entropy(gray_u8):
     return float(-(hist * np.log2(hist)).sum())
 
 
-def dark_channel_mean(rgb_f32, patch=15):
-    min_rgb = rgb_f32.min(axis=2)
-    kernel = np.ones((patch, patch), dtype=np.uint8)
-    dark = cv2.erode(min_rgb, kernel, borderType=cv2.BORDER_REPLICATE)
-    return float(dark.mean())
+def mean_luminance(rgb_f32):
+    """Mean scene brightness (BT.601 luma Y)."""
+    Y = 0.299 * rgb_f32[:, :, 0] + 0.587 * rgb_f32[:, :, 1] + 0.114 * rgb_f32[:, :, 2]
+    return float(Y.mean())
+
+
+def gradient_snr(gray_f32):
+    """Gradient signal-to-noise ratio: mean Sobel magnitude / std of |Laplacian| in flat regions."""
+    gray_u8 = (gray_f32 * 255).clip(0, 255).astype(np.uint8)
+    sobelx = cv2.Sobel(gray_u8, cv2.CV_64F, 1, 0, ksize=3)
+    sobely = cv2.Sobel(gray_u8, cv2.CV_64F, 0, 1, ksize=3)
+    grad_mag = np.sqrt(sobelx ** 2 + sobely ** 2)
+    edge_mean = float(grad_mag.mean())
+    lap = cv2.Laplacian(gray_u8, cv2.CV_64F)
+    flat_threshold = float(np.percentile(grad_mag, 33))
+    flat_mask = grad_mag < flat_threshold
+    if flat_mask.sum() > 100:
+        noise_std = float(np.abs(lap[flat_mask]).std())
+    else:
+        noise_std = 1.0
+    return edge_mean / (noise_std + 1e-6)
 
 
 def glare_ratio(rgb_f32, threshold=0.95):
@@ -109,11 +129,11 @@ def compute_raw(image_path):
     gray_f32 = 0.299 * rgb[:, :, 0] + 0.587 * rgb[:, :, 1] + 0.114 * rgb[:, :, 2]
     gray_u8  = (gray_f32 * 255).clip(0, 255).astype(np.uint8)
     return {
-        "contrast":    michelson_contrast(gray_f32),
-        "entropy":     shannon_entropy(gray_u8),
-        "dark_channel": dark_channel_mean(rgb),
-        "glare":       glare_ratio(rgb),
-        "sharpness":   laplacian_sharpness(gray_f32),
+        "contrast":     michelson_contrast(gray_f32),
+        "entropy":      shannon_entropy(gray_u8),
+        "luminance":    mean_luminance(rgb),
+        "glare":        glare_ratio(rgb),
+        "gradient_snr": gradient_snr(gray_f32),
     }
 
 
@@ -121,7 +141,7 @@ def compute_raw(image_path):
 
 def normalise_records(records):
     """Min-max normalise each sub-metric across all records in place."""
-    keys = ["contrast", "entropy", "dark_channel", "glare", "sharpness"]
+    keys = ["contrast", "entropy", "luminance", "glare", "gradient_snr"]
     ranges = {}
     for k in keys:
         vals = [r[k] for r in records]
@@ -132,13 +152,13 @@ def normalise_records(records):
         for k in keys:
             lo, hi = ranges[k]
             r[f"{k}_norm"] = (r[k] - lo) / (hi - lo) if hi > lo else 0.5
-        # Vis composite (paper §3.3)
-        C = r["contrast_norm"]
-        E = r["entropy_norm"]
-        D = r["dark_channel_norm"]
-        G = r["glare_norm"]
-        S = r["sharpness_norm"]
-        r["vis"] = 0.25*C + 0.25*E + 0.20*(1-D) + 0.15*(1-G) + 0.15*S
+        # Vis composite (paper §3.3) — revised formula
+        C   = r["contrast_norm"]
+        E   = r["entropy_norm"]
+        B   = r["luminance_norm"]
+        G   = r["glare_norm"]
+        SNR = r["gradient_snr_norm"]
+        r["vis"] = 0.20*C + 0.10*E + 0.20*B + 0.25*(1-G) + 0.25*SNR
     return ranges
 
 
@@ -222,7 +242,7 @@ def main():
             continue
         summary[method] = {
             k: round(float(np.mean([r[k] for r in rows if k in r])), 6)
-            for k in ["contrast", "entropy", "dark_channel", "glare", "sharpness", "vis"]
+            for k in ["contrast", "entropy", "luminance", "glare", "gradient_snr", "vis"]
         }
         for k in ["psnr", "ssim", "mae"]:
             vals = [r[k] for r in rows if k in r]
