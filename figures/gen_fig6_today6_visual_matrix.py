@@ -159,14 +159,20 @@ def verify_lucid_outputs() -> None:
 
 def make_matrix() -> Image.Image:
     cell_w, cell_h = 228, 136
-    header_h = 34
-    canvas = Image.new("RGB", (cell_w * len(METHODS), header_h + cell_h * len(SCENES)), "white")
+    gap = 2
+    row_gap = 2
+    margin = 6
+    header_h = 36
+    width = margin * 2 + cell_w * len(METHODS) + gap * (len(METHODS) - 1)
+    height = margin * 2 + header_h + cell_h * len(SCENES) + row_gap * (len(SCENES) - 1)
+    canvas = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(canvas)
     header_font = font(22, True)
     for col, (label, _) in enumerate(METHODS):
+        x = margin + col * (cell_w + gap)
         bbox = draw.textbbox((0, 0), label, font=header_font)
         draw.text(
-            (col * cell_w + (cell_w - (bbox[2] - bbox[0])) / 2, 6),
+            (x + (cell_w - (bbox[2] - bbox[0])) / 2, margin),
             label,
             font=header_font,
             fill=(24, 30, 38),
@@ -176,7 +182,9 @@ def make_matrix() -> Image.Image:
         for col, (_, key) in enumerate(METHODS):
             path = WORK_DIR / key / scene
             tile = ImageOps.fit(Image.open(path).convert("RGB"), (cell_w, cell_h), method=Image.Resampling.LANCZOS)
-            canvas.paste(tile, (col * cell_w, header_h + row * cell_h))
+            x = margin + col * (cell_w + gap)
+            y = margin + header_h + row * (cell_h + row_gap)
+            canvas.paste(tile, (x, y))
     return canvas
 
 
@@ -193,6 +201,7 @@ def main() -> None:
         "columns": [label for label, _ in METHODS],
         "source": "main branch data images added in commit a59a979/6d5d54c",
         "lucidmine_checkpoint": "experiment/LUCIDMine/modal_run_v2/best.pth from origin/claude/lucidmine-paper-audit-fzyBW",
+        "layout": "Compact white-gutter matrix with 2 px inter-image gaps, matching the narrow-spacing style used by Fig.5.",
     }
     (ROOT / "figure_data" / "fig6_today6_6x6_visual_matrix_manifest.json").write_text(
         json.dumps(manifest, indent=2),

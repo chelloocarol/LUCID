@@ -17,5 +17,6 @@
     "LUCIDMine"
   ],
   "source": "main branch data images added in commit a59a979/6d5d54c",
-  "lucidmine_checkpoint": "experiment/LUCIDMine/modal_run_v2/best.pth from origin/claude/lucidmine-paper-audit-fzyBW"
+  "lucidmine_checkpoint": "experiment/LUCIDMine/modal_run_v2/best.pth from origin/claude/lucidmine-paper-audit-fzyBW",
+  "layout": "Compact white-gutter matrix with 2 px inter-image gaps, matching the narrow-spacing style used by Fig.5."
 }
