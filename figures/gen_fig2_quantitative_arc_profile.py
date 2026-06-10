@@ -15,6 +15,7 @@ DATA_PATH = ROOT / "figure_data" / "metrics" / "arc_chart_data.json"
 FIG_DIR = ROOT / "figures"
 TABLE_DIR = ROOT / "figure_data" / "tables"
 OUT_STEM = "fig2_quantitative_arc_profile"
+PANEL_RMAX = 1.15
 
 METRICS = [
     {
@@ -130,6 +131,11 @@ def tick_labels(ticks: list[float]) -> list[str]:
     return labels
 
 
+def scaled_tick_positions(ticks: list[float], rmax: float) -> list[float]:
+    """Map metric-scale ticks to the fixed visual radius used by all panels."""
+    return [PANEL_RMAX * (float(tick) / rmax) for tick in ticks]
+
+
 def draw_arc_panel(
     ax: plt.Axes,
     rows: list[dict[str, float | str | int]],
@@ -143,32 +149,34 @@ def draw_arc_panel(
     theta_start = math.radians(135.0)
     max_span = math.radians(245.0)
     theta_ref = np.linspace(theta_start, theta_start - max_span, 360)
+    method_radii = np.linspace(1.04, 0.46, len(methods))
 
     cmap = plt.get_cmap("Blues")
     colors = [cmap(v) for v in np.linspace(0.46, 0.88, len(methods))]
 
     ax.set_theta_zero_location("E")
     ax.set_theta_direction(1)
-    ax.set_ylim(0, rmax)
+    ax.set_ylim(0, PANEL_RMAX)
     ax.set_facecolor("white")
     ax.spines["polar"].set_visible(False)
 
     # Hide angular coordinates; keep only subtle radial value ticks.
     ax.set_xticks([])
-    ax.set_yticks(ticks)
+    ax.set_yticks(scaled_tick_positions(ticks, rmax))
     ax.set_yticklabels(tick_labels(ticks), fontsize=6.5, color="#7B8494")
     ax.set_rlabel_position(112)
     ax.yaxis.grid(True, color="#E4EAF2", linewidth=0.55)
     ax.xaxis.grid(False)
 
-    # Method-specific arcs. Radius and arc length both follow the metric value;
-    # faint full-span arcs provide a visual reference at the same radius.
-    for method, value, color in zip(methods, values, colors):
+    # Method-specific arcs. Each method has a fixed concentric radius; only
+    # clockwise arc length encodes the metric value. This keeps the layout
+    # comparable across metrics while preserving visible radial reference ticks.
+    for method, value, radius, color in zip(methods, values, method_radii, colors):
         clipped = min(max(value, 0.0), rmax)
         score = clipped / rmax if rmax else 0.0
         ax.plot(
             theta_ref,
-            np.full_like(theta_ref, clipped),
+            np.full_like(theta_ref, radius),
             color="#ECF1F8",
             lw=8.0,
             solid_capstyle="round",
@@ -177,7 +185,7 @@ def draw_arc_panel(
         theta = np.linspace(theta_start, theta_start - max_span * score, 260)
         ax.plot(
             theta,
-            np.full_like(theta, clipped),
+            np.full_like(theta, radius),
             color=color,
             lw=8.0,
             solid_capstyle="round",
