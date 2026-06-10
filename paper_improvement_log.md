@@ -569,3 +569,61 @@ LUCIDMine在全部6类场景（M1-M6）均最优（0.587-0.708）。
 - 注：修订公式下骨干基线Vis(0.668)略高于LUCIDMine(0.644)；原始公式下骨干基线(0.918) < LUCIDMine(0.931)。两者差异来自合成/真实数据域及VCA/GARC对不同Vis分量的影响，表2维持原始公式以保持内部一致性。
 
 **输出文件**: `experiment/eval/vis_corrected_protocol_a.csv`
+
+
+---
+
+## 迭代 N+2 — §4.4 合成压力测试实验完整化 + 图表更新
+
+**日期**: 2026-06-10  
+**改进类型**: 实验数据补全 / 图表更新
+
+### 变更1: 表4 (Table 13) 数据修正与AdaIR完整实验
+
+**背景**: 表4原始数据来自Protocol B（152对真实测试集）而非30对合成测试集，且AdaIR行全部为"—"。
+
+**操作**:
+1. 重建30对合成测试集（确定性Koschmieder+gamma+眩光退化管线，SEED=42）
+2. 在448×256代理分辨率运行全部6种方法的推理（含AdaIR CPU推理）
+3. 计算PSNR/SSIM/MAE/Vis指标并更新表4所有行
+
+**修正后数值**:
+| 方法 | PSNR | SSIM | MAE | Vis |
+|------|------|------|-----|-----|
+| 输入原图 | 18.77±3.59 | 0.851±0.054 | 0.108±0.048 | 0.491±0.038 |
+| DCP [1] | 16.31±1.72 | 0.747±0.059 | 0.135±0.030 | 0.508±0.043 |
+| CLAHE [4] | 17.46±1.49 | 0.781±0.035 | 0.114±0.025 | 0.536±0.051 |
+| Retinex [3] | 15.31±1.71 | 0.809±0.045 | 0.154±0.035 | 0.535±0.026 |
+| AdaIR [35]† | 19.13±2.04 | 0.855±0.062 | 0.104±0.026 | 0.530±0.045 |
+| LUCIDMine | 18.74±2.24 | 0.814±0.030 | 0.097±0.031 | 0.587±0.056 |
+
+**关键发现**: LUCIDMine在Vis（感知质量）和MAE（像素精度）上领先；AdaIR因SOTS预训练与Koschmieder合成退化域匹配，在PSNR/SSIM上略占优。这一现象说明LUCIDMine的煤矿先验自适应专为真实矿区复合退化设计，而非合成哈兹场景。
+
+### 变更2: 表4脚注更新
+
+原`‡`注释（AdaIR未在本子集评测）已删除，改为`†`注：  
+"†AdaIR[35]（ICLR 2025）于448×256代理分辨率进行CPU推理，合成退化流水线与其他方法完全相同。"
+
+### 变更3: §4.4正文（Para 97）更新
+
+更新了§4.4正文，反映AdaIR现已完整纳入合成子集评测，并准确描述各方法相对性能。
+
+### 变更4: 图3圆弧剖面图（fig3）重新生成
+
+基于新的30对合成测试数据重新生成圆弧剖面图，并替换docx中对应形状。
+
+### 变更5: 全部论文图表更新为main分支最新版本
+
+从GitHub main分支拉取最新图表（Jun 10）：
+- **fig1** (`fig1_LUCIDMine_Overview.png`, 1774×887): LUCIDMine整体架构新版
+- **fig2** (`fig3_3d_visibility_surface.png`, 1180×930): 六类场景×六方法3D可见度曲面
+- **fig3** (`fig3_synth30_arc_profile.png`, 3228×744): 30对合成测试圆弧剖面图（新生成）
+- **fig5** (`fig5_cross_domain_stability_zoom.png`, 1198×420): 跨域稳定性对比
+- **fig6** (`fig6_today6_6x6_visual_matrix.png`, 1390×874): 完整6×6定性比对矩阵
+
+**输出文件**:
+- `experiment/eval/synth_30pair_results/metrics_fullref_summary.json`
+- `experiment/eval/synth_30pair_results/metrics_table13_summary.json`
+- `experiment/eval/synth_30pair_results/table13_final.json`
+- `figures/fig3_synth30_arc_profile.png`
+- `figure_data/metrics/arc_chart_data_synth30.json`

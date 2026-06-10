@@ -1,0 +1,50 @@
+{
+  "note": "Data for synthetic 30-pair stress test arc profile (fig3). All methods at 448x256. Vis uses CORRECTED formula.",
+  "n": 30,
+  "methods_order": [
+    "Input",
+    "DCP",
+    "CLAHE",
+    "Retinex",
+    "AdaIR",
+    "LUCIDMine"
+  ],
+  "metrics": {
+    "Input": {
+      "psnr": 18.77,
+      "ssim": 0.851,
+      "mae": 0.108,
+      "vis": 0.491
+    },
+    "DCP": {
+      "psnr": 16.31,
+      "ssim": 0.747,
+      "mae": 0.135,
+      "vis": 0.508
+    },
+    "CLAHE": {
+      "psnr": 17.46,
+      "ssim": 0.781,
+      "mae": 0.114,
+      "vis": 0.536
+    },
+    "Retinex": {
+      "psnr": 15.31,
+      "ssim": 0.809,
+      "mae": 0.154,
+      "vis": 0.535
+    },
+    "AdaIR": {
+      "psnr": 19.13,
+      "ssim": 0.855,
+      "mae": 0.104,
+      "vis": 0.53
+    },
+    "LUCIDMine": {
+      "psnr": 18.74,
+      "ssim": 0.814,
+      "mae": 0.097,
+      "vis": 0.587
+    }
+  }
+}
