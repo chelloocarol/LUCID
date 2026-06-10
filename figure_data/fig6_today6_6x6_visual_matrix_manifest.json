@@ -1,0 +1,21 @@
+{
+  "figure": "fig6_today6_6x6_visual_matrix",
+  "rows": [
+    "e9c7e537ea96d384fdafe31a744781d7.jpg",
+    "c72d1ab6361e36ae9a1b15120b054813.jpg",
+    "b9ae1c4e4bab635134d527b1cab8b0cc.jpg",
+    "8d1a02be508cb561ac873fe18c4b4861.jpg",
+    "a47ac21e3d7ea521c6f963e52137b6a8.jpg",
+    "227.jpg"
+  ],
+  "columns": [
+    "Input",
+    "DCP",
+    "CLAHE",
+    "Retinex",
+    "AdaIR",
+    "LUCIDMine"
+  ],
+  "source": "main branch data images added in commit a59a979/6d5d54c",
+  "lucidmine_checkpoint": "experiment/LUCIDMine/modal_run_v2/best.pth from origin/claude/lucidmine-paper-audit-fzyBW"
+}
