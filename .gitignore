@@ -1,6 +1,9 @@
 # Inference outputs (large image files, can be regenerated)
 experiment/infer_test/*/
 experiment/LUCIDMine/
+# Exception: trained LUCIDMine checkpoint (tracked via Git LFS)
+!experiment/LUCIDMine/modal_run_v2/
+!experiment/LUCIDMine/modal_run_v2/best.pth
 
 __pycache__/
 *.py[cod]
