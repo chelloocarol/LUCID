@@ -10,24 +10,24 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 FIG_DIR = ROOT / "figures"
 SRC_DIR = ROOT / "figure_data" / "figure_sources"
-IMAGE_ROOT = ROOT / "figure_data" / "images"
+IMAGE_ROOT = ROOT / "figure_data" / "images" / "cross_domain_223"
 
-SCENE = "13502 T2传感器__segment_035"
+SCENE = "223.jpeg"
 
-# ROI used by the original cross-domain stability figure, mapped to the
-# 960x540 source scene from the Claude branch. The box focuses on the sensor
-# cluster so the zoom row exposes structure and haze differences.
-ROI_BOX = (510, 160, 650, 265)
+# ROI focuses on the sensor cluster in data/223.jpeg. It is the same semantic
+# region used by the original cross-domain stability figure.
+ROI_BOX = (318, 70, 473, 165)
 
 BASE_METHODS = [
-    ("DCP", "dcp"),
-    ("CLAHE", "clahe"),
-    ("Retinex", "retinex"),
-    ("AdaIR", "adair"),
+    ("Input", "input.jpg"),
+    ("DCP", "dcp.jpg"),
+    ("CLAHE", "clahe.jpg"),
+    ("Retinex", "retinex.jpg"),
+    ("AdaIR", "adair_official_dehaze.png"),
 ]
 
-LUCID_LABELS = ["LUCIDMine", "LUCIDMine", "LUCIDMine", "LUCIDMine"]
-LUCID_METHOD_DIR = "lucidmine"
+LUCID_LABELS = ["LUCIDMine"] * len(BASE_METHODS)
+LUCID_FILENAME = "lucidmine.jpg"
 
 
 def font(size: int, bold: bool = False):
@@ -41,13 +41,11 @@ def font(size: int, bold: bool = False):
     return ImageFont.load_default()
 
 
-def find_image(method_dir: str, stem: str) -> Path:
-    base = IMAGE_ROOT / method_dir
-    for ext in (".png", ".jpg", ".jpeg"):
-        path = base / f"{stem}{ext}"
-        if path.exists():
-            return path
-    raise FileNotFoundError(f"No image for method={method_dir}, scene={stem}")
+def find_image(filename: str) -> Path:
+    path = IMAGE_ROOT / filename
+    if path.exists():
+        return path
+    raise FileNotFoundError(f"No image file: {path}")
 
 
 def scale_box(box: tuple[int, int, int, int], src_size: tuple[int, int], dst_size: tuple[int, int]) -> tuple[int, int, int, int]:
@@ -101,8 +99,8 @@ def build_figure() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     SRC_DIR.mkdir(parents=True, exist_ok=True)
 
-    base_images = [(label, Image.open(find_image(method_dir, SCENE)).convert("RGB")) for label, method_dir in BASE_METHODS]
-    lucid_path = find_image(LUCID_METHOD_DIR, SCENE)
+    base_images = [(label, Image.open(find_image(filename)).convert("RGB")) for label, filename in BASE_METHODS]
+    lucid_path = find_image(LUCID_FILENAME)
     lucid = Image.open(lucid_path).convert("RGB")
 
     cell_w, cell_h = 236, 137
@@ -126,9 +124,10 @@ def build_figure() -> None:
         "base_methods": [label for label, _ in BASE_METHODS],
         "lucid_source": str(lucid_path),
         "note": (
-            "Layout follows the original cross-domain stability figure. The RIDCP column is replaced by AdaIR; "
-            "all other visual structure is preserved. Top row shows Base method outputs, the middle row concatenates "
-            "Base ROI zoom and LUCIDMine ROI zoom, and the bottom row repeats LUCIDMine for source-domain stability."
+            "Layout follows the original cross-domain stability figure. The test image is changed to data/223.jpeg, "
+            "the RIDCP column is replaced by AdaIR, and an Input anchor column is added at the left. Top row shows "
+            "Input/Base method outputs, the middle row concatenates each top-row ROI zoom and the corresponding "
+            "LUCIDMine ROI zoom, and the bottom row repeats LUCIDMine for source-domain stability."
         ),
         "sources": {},
     }
@@ -141,8 +140,8 @@ def build_figure() -> None:
 
     for col, ((base_label, base_img), lucid_label) in enumerate(zip(base_images, LUCID_LABELS)):
         x = margin + col * (cell_w + gap)
-        base_box = scale_box(ROI_BOX, (960, 540), base_img.size)
-        lucid_box = scale_box(ROI_BOX, (960, 540), lucid.size)
+        base_box = scale_box(ROI_BOX, (789, 443), base_img.size)
+        lucid_box = scale_box(ROI_BOX, (789, 443), lucid.size)
 
         top_tile = fit_cover(base_img, (cell_w, cell_h))
         top_box_scaled = scale_box(base_box, base_img.size, (cell_w, cell_h))
@@ -167,7 +166,7 @@ def build_figure() -> None:
         center_text(draw, (x, y_bottom_label, x + cell_w, y_bottom_label + label_h), lucid_label, f_label)
 
         manifest["sources"][base_label] = {
-            "base_image": str(find_image(dict(BASE_METHODS)[base_label], SCENE)),
+            "base_image": str(find_image(dict(BASE_METHODS)[base_label])),
             "base_roi_xyxy": base_box,
             "lucid_roi_xyxy": lucid_box,
         }
@@ -185,7 +184,7 @@ def build_figure() -> None:
 \begin{figure*}[t]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/fig_cross_domain_stability_zoom.pdf}
-    \caption{Cross-domain qualitative stability comparison on the same real underground test image. The top row shows Base restorations from DCP, CLAHE, Retinex, and AdaIR; the middle row concatenates the Base ROI zoom and the corresponding LUCIDMine ROI zoom; the bottom row shows the LUCIDMine output, illustrating stable recovery of the highlighted instrument region under source-domain variation.}
+    \caption{Cross-domain qualitative stability comparison on the same real underground test image. The top row shows the input image and Base restorations from DCP, CLAHE, Retinex, and AdaIR; the middle row concatenates each top-row ROI zoom and the corresponding LUCIDMine ROI zoom; the bottom row shows the LUCIDMine output, illustrating stable recovery of the highlighted instrument region under source-domain variation.}
     \label{fig:cross_domain_stability_zoom}
 \end{figure*}
 """

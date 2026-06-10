@@ -1,80 +1,96 @@
 {
   "figure": "fig_cross_domain_stability_zoom",
-  "scene": "13502 T2传感器__segment_035",
+  "scene": "223.jpeg",
   "role": "Qualitative cross-domain/source stability comparison with local ROI zooms.",
   "roi_box_source_xyxy": [
-    510,
-    160,
-    650,
-    265
+    318,
+    70,
+    473,
+    165
   ],
   "base_methods": [
+    "Input",
     "DCP",
     "CLAHE",
     "Retinex",
     "AdaIR"
   ],
-  "lucid_source": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\lucidmine\\13502 T2传感器__segment_035.png",
-  "note": "Layout follows the original cross-domain stability figure. The RIDCP column is replaced by AdaIR; all other visual structure is preserved. Top row shows Base method outputs, the middle row concatenates Base ROI zoom and LUCIDMine ROI zoom, and the bottom row repeats LUCIDMine for source-domain stability.",
+  "lucid_source": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\lucidmine.jpg",
+  "note": "Layout follows the original cross-domain stability figure. The test image is changed to data/223.jpeg, the RIDCP column is replaced by AdaIR, and an Input anchor column is added at the left. Top row shows Input/Base method outputs, the middle row concatenates each top-row ROI zoom and the corresponding LUCIDMine ROI zoom, and the bottom row repeats LUCIDMine for source-domain stability.",
   "sources": {
-    "DCP": {
-      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\dcp\\13502 T2传感器__segment_035.png",
+    "Input": {
+      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\input.jpg",
       "base_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ],
       "lucid_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
+      ]
+    },
+    "DCP": {
+      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\dcp.jpg",
+      "base_roi_xyxy": [
+        318,
+        70,
+        473,
+        165
+      ],
+      "lucid_roi_xyxy": [
+        318,
+        70,
+        473,
+        165
       ]
     },
     "CLAHE": {
-      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\clahe\\13502 T2传感器__segment_035.png",
+      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\clahe.jpg",
       "base_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ],
       "lucid_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ]
     },
     "Retinex": {
-      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\retinex\\13502 T2传感器__segment_035.png",
+      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\retinex.jpg",
       "base_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ],
       "lucid_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ]
     },
     "AdaIR": {
-      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\adair\\13502 T2传感器__segment_035.jpg",
+      "base_image": "D:\\ARIS\\_github_upload_LUCID_20260601\\figure_data\\images\\cross_domain_223\\adair_official_dehaze.png",
       "base_roi_xyxy": [
-        238,
-        76,
-        303,
-        126
+        318,
+        70,
+        473,
+        165
       ],
       "lucid_roi_xyxy": [
-        510,
-        160,
-        650,
-        265
+        318,
+        70,
+        473,
+        165
       ]
     }
   }
