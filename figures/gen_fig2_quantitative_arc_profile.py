@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import statistics
 from pathlib import Path
 
 import matplotlib
@@ -11,19 +12,28 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "figure_data" / "metrics" / "comparison_lowres_448x256.json"
-FALLBACK_DATA_PATH = ROOT / "data" / "comparison_lowres_448x256.json"
+FULLREF_PATH = ROOT / "figure_data" / "metrics" / "test_fullref_metrics.csv"
+ADAIR_PATH = ROOT / "figure_data" / "metrics" / "adair_eval.json"
+VIS_PATH = ROOT / "figure_data" / "metrics" / "vis_metrics_all_methods_with_adair.csv"
 FIG_DIR = ROOT / "figures"
 TABLE_DIR = ROOT / "figure_data" / "tables"
 OUT_STEM = "fig2_quantitative_arc_profile"
 
-METHOD_ALIASES = {
+FULLREF_ALIASES = {
     "Input": ("input", "Input"),
-    "DCP": ("DCP",),
-    "CLAHE": ("CLAHE",),
-    "Retinex": ("Retinex",),
-    "AdaIR": ("AdaIR", "AdaIR(ICLR2025)"),
-    "LUCIDMine": ("LUCIDMine", "LUCID", "LUCIDMine(v2)"),
+    "DCP": ("dcp", "DCP"),
+    "CLAHE": ("clahe", "CLAHE"),
+    "Retinex": ("retinex", "Retinex"),
+    "LUCIDMine": ("lucidmine_modal_v2", "LUCIDMine", "lucidmine", "LUCID"),
+}
+
+VIS_ALIASES = {
+    "Input": ("input", "Input"),
+    "DCP": ("dcp", "DCP"),
+    "CLAHE": ("clahe", "CLAHE"),
+    "Retinex": ("retinex", "Retinex"),
+    "AdaIR": ("adair", "AdaIR", "AdaIR(ICLR2025)"),
+    "LUCIDMine": ("lucidmine", "LUCIDMine", "lucidmine_modal_v2", "LUCID"),
 }
 
 METHODS = ["Input", "DCP", "CLAHE", "Retinex", "AdaIR", "LUCIDMine"]
@@ -53,40 +63,72 @@ def configure_style() -> None:
     )
 
 
-def load_data() -> dict:
-    path = DATA_PATH if DATA_PATH.exists() else FALLBACK_DATA_PATH
+def require_file(path: Path) -> None:
     if not path.exists():
-        raise FileNotFoundError(
-            f"Missing comparison data. Expected {DATA_PATH} or {FALLBACK_DATA_PATH}."
-        )
-    return json.loads(path.read_text(encoding="utf-8"))
+        raise FileNotFoundError(f"Missing required data file: {path}")
 
 
-def resolve_method(methods: dict, canonical: str) -> dict:
-    aliases = METHOD_ALIASES[canonical]
-    for alias in aliases:
-        if alias in methods:
-            return methods[alias]
-    lower = {str(k).lower(): v for k, v in methods.items()}
-    for alias in aliases:
-        if alias.lower() in lower:
-            return lower[alias.lower()]
-    raise KeyError(f"Cannot find method {canonical}; tried aliases {aliases}.")
+def read_fullref_rows() -> dict[str, dict[str, str]]:
+    require_file(FULLREF_PATH)
+    rows = list(csv.DictReader(FULLREF_PATH.read_text(encoding="utf-8-sig").splitlines()))
+    return {str(row["method"]).lower(): row for row in rows}
 
 
-def collect_table(data: dict) -> list[dict[str, float | str | int]]:
-    method_data = data["methods"]
+def read_adair_eval() -> dict:
+    require_file(ADAIR_PATH)
+    return json.loads(ADAIR_PATH.read_text(encoding="utf-8"))
+
+
+def read_vis_means() -> dict[str, float]:
+    require_file(VIS_PATH)
+    rows = list(csv.DictReader(VIS_PATH.read_text(encoding="utf-8-sig").splitlines()))
+    grouped: dict[str, list[float]] = {}
+    for row in rows:
+        method = str(row["method"]).lower()
+        grouped.setdefault(method, []).append(float(row["vis"]))
+    return {method: statistics.mean(values) for method, values in grouped.items()}
+
+
+def resolve_row(rows: dict[str, dict[str, str]], canonical: str) -> dict[str, str]:
+    for alias in FULLREF_ALIASES[canonical]:
+        row = rows.get(alias.lower())
+        if row is not None:
+            return row
+    raise KeyError(f"Cannot find full-reference row for {canonical}; tried {FULLREF_ALIASES[canonical]}")
+
+
+def resolve_vis(vis_means: dict[str, float], canonical: str) -> float:
+    for alias in VIS_ALIASES[canonical]:
+        if alias.lower() in vis_means:
+            return vis_means[alias.lower()]
+    raise KeyError(f"Cannot find Vis rows for {canonical}; tried {VIS_ALIASES[canonical]}")
+
+
+def collect_table() -> list[dict[str, float | str | int]]:
+    fullref_rows = read_fullref_rows()
+    adair = read_adair_eval()
+    vis_means = read_vis_means()
     rows = []
     for method in METHODS:
-        record = resolve_method(method_data, method)
+        if method == "AdaIR":
+            n = int(adair.get("n", 0))
+            psnr = float(adair["full_psnr"])
+            ssim = float(adair["full_ssim"])
+            mae = float(adair["masked_l1"])
+        else:
+            record = resolve_row(fullref_rows, method)
+            n = int(record.get("n", 0))
+            psnr = float(record["psnr"])
+            ssim = float(record["ssim"])
+            mae = float(record["mae"])
         rows.append(
             {
                 "Method": method,
-                "n": int(record.get("n", 0)),
-                "PSNR": float(record["psnr"]),
-                "SSIM": float(record["ssim"]),
-                "MAE": float(record["mae"]),
-                "Vis": float(record["vis"]),
+                "n": n,
+                "PSNR": psnr,
+                "SSIM": ssim,
+                "MAE": mae,
+                "Vis": resolve_vis(vis_means, method),
             }
         )
     return rows
@@ -202,8 +244,7 @@ def save_all(fig: plt.Figure) -> None:
 
 
 def main() -> None:
-    data = load_data()
-    rows = collect_table(data)
+    rows = collect_table()
     save_tables(rows)
     configure_style()
 
