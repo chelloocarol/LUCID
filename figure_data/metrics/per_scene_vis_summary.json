@@ -1,0 +1,38 @@
+{
+  "AdaIR": {
+    "M1: Intake Heading (Dust+Glare)": 0.607,
+    "M2: T2 Sensor Area (Multi-light)": 0.5941,
+    "M3: Return Air Heading (Low-light)": 0.5412,
+    "M4: Gas Inspection Face (Haze)": 0.6322
+  },
+  "Input": {
+    "M1: Intake Heading (Dust+Glare)": 0.6237,
+    "M2: T2 Sensor Area (Multi-light)": 0.6289,
+    "M3: Return Air Heading (Low-light)": 0.5027,
+    "M4: Gas Inspection Face (Haze)": 0.6431
+  },
+  "DCP": {
+    "M1: Intake Heading (Dust+Glare)": 0.6469,
+    "M2: T2 Sensor Area (Multi-light)": 0.6131,
+    "M3: Return Air Heading (Low-light)": 0.5427,
+    "M4: Gas Inspection Face (Haze)": 0.6629
+  },
+  "CLAHE": {
+    "M1: Intake Heading (Dust+Glare)": 0.6694,
+    "M2: T2 Sensor Area (Multi-light)": 0.6356,
+    "M3: Return Air Heading (Low-light)": 0.5308,
+    "M4: Gas Inspection Face (Haze)": 0.5806
+  },
+  "Retinex": {
+    "M1: Intake Heading (Dust+Glare)": 0.3561,
+    "M2: T2 Sensor Area (Multi-light)": 0.3752,
+    "M3: Return Air Heading (Low-light)": 0.3601,
+    "M4: Gas Inspection Face (Haze)": 0.5027
+  },
+  "LUCIDMine": {
+    "M1: Intake Heading (Dust+Glare)": 0.6837,
+    "M2: T2 Sensor Area (Multi-light)": 0.6525,
+    "M3: Return Air Heading (Low-light)": 0.5869,
+    "M4: Gas Inspection Face (Haze)": 0.7081
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "input": {
+    "contrast": 0.297595,
+    "entropy": 7.288134,
+    "dark_channel": 0.254177,
+    "glare": 0.013939,
+    "sharpness": 1306.520094,
+    "vis": 0.526121
+  },
+  "clahe": {
+    "contrast": 0.463913,
+    "entropy": 7.433645,
+    "dark_channel": 0.198725,
+    "glare": 0.020495,
+    "sharpness": 3206.483185,
+    "vis": 0.656241
+  },
+  "retinex": {
+    "contrast": 0.197631,
+    "entropy": 4.075726,
+    "dark_channel": 0.102424,
+    "glare": 7e-06,
+    "sharpness": 63.631288,
+    "vis": 0.397357
+  },
+  "dcp": {
+    "contrast": 0.676451,
+    "entropy": 6.704324,
+    "dark_channel": 0.026098,
+    "glare": 0.011667,
+    "sharpness": 2122.47865,
+    "vis": 0.774642
+  },
+  "student": {
+    "contrast": 0.53788,
+    "entropy": 6.983541,
+    "dark_channel": 0.093856,
+    "glare": 0.005004,
+    "sharpness": 1137.3084,
+    "vis": 0.6916
+  },
+  "lucidmine_init": {
+    "contrast": 0.53788,
+    "entropy": 6.983541,
+    "dark_channel": 0.093856,
+    "glare": 0.005004,
+    "sharpness": 1137.308405,
+    "vis": 0.6916
+  },
+  "lucidmine_modal_v2": {
+    "contrast": 0.423038,
+    "entropy": 7.190758,
+    "dark_channel": 0.179509,
+    "glare": 0.014965,
+    "sharpness": 848.202093,
+    "vis": 0.593022
+  }
+}

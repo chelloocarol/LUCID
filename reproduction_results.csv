@@ -1,0 +1,27 @@
+﻿实验编号,实验名称,模型,数据集,n,指标,值,标准差,来源,日期,备注
+EXP-004,参数量验证,Student(res_blocks=1),N/A,-,参数量/M,2.9975,N/A,代码计算(thop),2026-06-02,对应仓库weights/Student.pth
+EXP-004,参数量验证,Student(res_blocks=4),N/A,-,参数量/M,6.2454,N/A,代码计算(thop),2026-06-02,最接近论文声称6.42M
+EXP-004,参数量验证,LUCIDMine(res_blocks=1),N/A,-,参数量/M,3.0147,N/A,代码计算(thop),2026-06-02,含VCA+GARC
+EXP-004,参数量验证,LUCIDMine(res_blocks=4),N/A,-,参数量/M,6.2626,N/A,代码计算(thop),2026-06-02,含VCA+GARC
+EXP-004,参数量验证,VCA模块,N/A,-,参数量/M,0.0172,N/A,代码计算(thop),2026-06-02,VisibilityConditionedCoAAdapter(128)
+EXP-004,参数量验证,GARC模块,N/A,-,参数量/M,0.000016,N/A,代码计算(thop),2026-06-02,GlareAwareResidualCalibrator
+EXP-005,已有训练日志,Student(R008 best),矿山验证集,-,val_full_psnr/dB,23.47,N/A,experiment/RealAdapt/R008日志,已完成,非LUCIDMine架构；val集非test集
+EXP-005,已有训练日志,Student(R008 best),矿山验证集,-,val_full_ssim,0.874,N/A,experiment/RealAdapt/R008日志,已完成,与论文声称0.956差距明显（不同条件）
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,PSNR/dB,18.908,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,target=RIDCP伪标签；非论文原始数据集
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,SSIM,0.7549,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),输入原图,lucidmine-40-video test set,152,MAE,0.0920,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,PSNR/dB,18.071,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,clipLimit=2.0; 8x8
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,SSIM,0.7755,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-101,全参考评估(40视频测试集),CLAHE,lucidmine-40-video test set,152,MAE,0.1049,N/A,experiment/eval/test_fullref_metrics.csv,2026-06-02,同上
+EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,PSNR/dB,23.013585,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
+EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,SSIM,0.843842,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
+EXP-201,LUCIDMine微调后评估,LUCIDMine(lucidmine_modal_v2),lucidmine-40-video test set,152,MAE,0.063533,N/A,experiment/eval/lucidmine_v2_eval.json,2026-06-02,Modal A10G，83 epoch（best@ep48）；代理集RIDCP伪标签参考
+EXP-203,全方法Vis联合评估,input,lucidmine-40-video test set,152,Vis,0.526121,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,CLAHE,lucidmine-40-video test set,152,Vis,0.656241,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,Retinex,lucidmine-40-video test set,152,Vis,0.397357,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,DCP,lucidmine-40-video test set,152,Vis,0.774642,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,Student(骨干基线零样本),lucidmine-40-video test set,152,Vis,0.691600,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)
+EXP-203,全方法Vis联合评估,LUCIDMine(ep48 微调后),lucidmine-40-video test set,152,Vis,0.593022,N/A,experiment/eval/vis_summary_all_methods.json,2026-06-03,全方法联合归一化(1920×1088)；训练匹配RIDCP伪标签导致sharpness下降
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,PSNR/dB,20.711931,1.6910599587443482,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,SSIM,0.733972,0.05674680322408676,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256
+EXP-202,AdaIR基线评估(替代RIDCP),AdaIR-single-dehaze(ICLR2025),lucidmine-40-video test set (448×256),152,MAE,0.075835,0.016785854726612526,experiment/eval/adair_eval.json,2026-06-03,448×256评估；adair-single-dehaze.ckpt；CPU推理；目标缩放至448×256

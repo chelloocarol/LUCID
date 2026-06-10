@@ -1,0 +1,20 @@
+{
+  "manifest": "data/mine_manifest.csv",
+  "init_ckpt": "weights/Student.pth",
+  "exp_name": "smoke_lucidmine",
+  "exp_dir": "experiment/LUCIDMine",
+  "warmup_epochs": 1,
+  "adapt_epochs": 1,
+  "batch_size": 2,
+  "crop_size": 128,
+  "num_workers": 0,
+  "lr_adapter": 0.0002,
+  "lr_backbone": 2e-05,
+  "end_lr": 1e-06,
+  "w_l1": 1.0,
+  "w_ssim": 0.2,
+  "w_edge": 0.05,
+  "w_glare": 0.03,
+  "save_every": 10,
+  "seed": 2026
+}
