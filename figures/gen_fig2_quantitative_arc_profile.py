@@ -15,37 +15,14 @@ DATA_PATH = ROOT / "figure_data" / "metrics" / "arc_chart_data.json"
 FIG_DIR = ROOT / "figures"
 TABLE_DIR = ROOT / "figure_data" / "tables"
 OUT_STEM = "fig2_quantitative_arc_profile"
-PANEL_RMAX = 1.15
+
+DISPLAY_METHODS = ["LUCIDMine", "AdaIR", "CLAHE", "Input", "DCP", "Retinex"]
 
 METRICS = [
-    {
-        "title": "PSNR ↑",
-        "key": "psnr",
-        "table_key": "PSNR",
-        "ticks": [0, 5, 10, 15, 20, 25],
-        "rmax": 25.0,
-    },
-    {
-        "title": "SSIM ↑",
-        "key": "ssim",
-        "table_key": "SSIM",
-        "ticks": [0, 0.25, 0.50, 0.75, 1.00],
-        "rmax": 1.0,
-    },
-    {
-        "title": "MAE ↓",
-        "key": "mae",
-        "table_key": "MAE",
-        "ticks": [0, 0.05, 0.10, 0.15, 0.20, 0.25],
-        "rmax": 0.25,
-    },
-    {
-        "title": "Vis ↑",
-        "key": "vis",
-        "table_key": "Vis",
-        "ticks": [0, 0.25, 0.50, 0.75, 1.00],
-        "rmax": 1.0,
-    },
+    {"title": "PSNR ↑", "key": "psnr", "table_key": "PSNR", "rmax": 25.0, "higher": True, "fmt": "{:.2f}"},
+    {"title": "SSIM ↑", "key": "ssim", "table_key": "SSIM", "rmax": 1.0, "higher": True, "fmt": "{:.3f}"},
+    {"title": "MAE ↓", "key": "mae", "table_key": "MAE", "rmax": 0.25, "higher": False, "fmt": "{:.3f}"},
+    {"title": "Vis ↑", "key": "vis", "table_key": "Vis", "rmax": 1.0, "higher": True, "fmt": "{:.3f}"},
 ]
 
 
@@ -55,8 +32,6 @@ def configure_style() -> None:
             "font.family": "serif",
             "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
             "font.size": 8.5,
-            "axes.labelsize": 8.5,
-            "axes.titlesize": 9,
             "figure.dpi": 300,
             "savefig.dpi": 300,
             "savefig.bbox": "tight",
@@ -70,11 +45,10 @@ def load_rows() -> list[dict[str, float | str | int]]:
     if not DATA_PATH.exists():
         raise FileNotFoundError(f"Missing arc-chart data file: {DATA_PATH}")
     data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    methods = data["methods_order"]
     metrics = data["metrics"]
 
     rows: list[dict[str, float | str | int]] = []
-    for method in methods:
+    for method in data["methods_order"]:
         record = metrics[method]
         rows.append(
             {
@@ -119,82 +93,77 @@ def save_tables(rows: list[dict[str, float | str | int]]) -> None:
     print(f"Saved: {tex_path}")
 
 
-def tick_labels(ticks: list[float]) -> list[str]:
-    labels = []
-    for tick in ticks:
-        if tick >= 1 and abs(tick - round(tick)) < 1e-8:
-            labels.append(str(int(round(tick))))
-        elif tick == 0:
-            labels.append("0")
-        else:
-            labels.append(f"{tick:.2f}".rstrip("0").rstrip("."))
-    return labels
+def row_by_method(rows: list[dict[str, float | str | int]]) -> dict[str, dict[str, float | str | int]]:
+    return {str(row["Method"]): row for row in rows}
 
 
-def scaled_tick_positions(ticks: list[float], rmax: float) -> list[float]:
-    """Map metric-scale ticks to the fixed visual radius used by all panels."""
-    return [PANEL_RMAX * (float(tick) / rmax) for tick in ticks]
+def quality_score(value: float, rmax: float, higher_is_better: bool) -> float:
+    clipped = min(max(value, 0.0), rmax)
+    raw = clipped / rmax if rmax else 0.0
+    return raw if higher_is_better else 1.0 - raw
 
 
-def draw_arc_panel(
-    ax: plt.Axes,
-    rows: list[dict[str, float | str | int]],
-    metric: dict[str, object],
-) -> None:
-    methods = [str(row["Method"]) for row in rows]
-    values = np.array([float(row[str(metric["table_key"])]) for row in rows], dtype=float)
+def draw_arc_panel(ax: plt.Axes, rows: list[dict[str, float | str | int]], metric: dict[str, object]) -> None:
+    lookup = row_by_method(rows)
     rmax = float(metric["rmax"])
-    ticks = [float(t) for t in metric["ticks"]]  # type: ignore[index]
+    higher = bool(metric["higher"])
+    key = str(metric["table_key"])
 
     theta_start = math.radians(135.0)
     max_span = math.radians(245.0)
-    theta_ref = np.linspace(theta_start, theta_start - max_span, 360)
-    method_radii = np.linspace(1.04, 0.46, len(methods))
+    theta_bg = np.linspace(theta_start, theta_start - max_span, 360)
+    method_radii = np.linspace(1.04, 0.46, len(DISPLAY_METHODS))
 
     cmap = plt.get_cmap("Blues")
-    colors = [cmap(v) for v in np.linspace(0.46, 0.88, len(methods))]
+    colors = [cmap(v) for v in np.linspace(0.88, 0.44, len(DISPLAY_METHODS))]
 
     ax.set_theta_zero_location("E")
     ax.set_theta_direction(1)
-    ax.set_ylim(0, PANEL_RMAX)
+    ax.set_ylim(0.30, 1.16)
     ax.set_facecolor("white")
     ax.spines["polar"].set_visible(False)
 
-    # Hide angular coordinates; keep only subtle radial value ticks.
+    # No coordinate ticks: the arcs are categorical method layers, not radial-value axes.
     ax.set_xticks([])
-    ax.set_yticks(scaled_tick_positions(ticks, rmax))
-    ax.set_yticklabels(tick_labels(ticks), fontsize=6.5, color="#7B8494")
-    ax.set_rlabel_position(112)
-    ax.yaxis.grid(True, color="#E4EAF2", linewidth=0.55)
-    ax.xaxis.grid(False)
+    ax.set_yticks([])
+    ax.grid(False)
 
-    # Method-specific arcs. Each method has a fixed concentric radius; only
-    # clockwise arc length encodes the metric value. This keeps the layout
-    # comparable across metrics while preserving visible radial reference ticks.
-    for method, value, radius, color in zip(methods, values, method_radii, colors):
-        clipped = min(max(value, 0.0), rmax)
-        score = clipped / rmax if rmax else 0.0
+    lucid_tail = None
+    lucid_value = None
+    lucid_radius = None
+
+    for method, radius, color in zip(DISPLAY_METHODS, method_radii, colors):
+        value = float(lookup[method][key])
+        score = quality_score(value, rmax, higher)
+        span = max_span * (0.06 + 0.94 * score)
+
         ax.plot(
-            theta_ref,
-            np.full_like(theta_ref, radius),
+            theta_bg,
+            np.full_like(theta_bg, radius),
             color="#ECF1F8",
-            lw=8.0,
+            lw=8.5,
             solid_capstyle="round",
             zorder=1,
         )
-        theta = np.linspace(theta_start, theta_start - max_span * score, 260)
+
+        theta = np.linspace(theta_start, theta_start - span, 260)
         ax.plot(
             theta,
             np.full_like(theta, radius),
             color=color,
-            lw=8.0,
+            lw=8.5,
             solid_capstyle="round",
             zorder=3,
         )
 
-    # Left-side method list, consistent across panels.
-    label_ys = np.linspace(0.62, 0.34, len(methods))
-    for method, y, color in zip(methods, label_ys, colors):
+        if method == "LUCIDMine":
+            lucid_tail = theta[-1]
+            lucid_value = value
+            lucid_radius = radius
+
+    # Left-side method list.
+    label_ys = np.linspace(0.62, 0.34, len(DISPLAY_METHODS))
+    for method, y, color in zip(DISPLAY_METHODS, label_ys, colors):
         ax.text(
             0.035,
             y,
@@ -202,7 +171,7 @@ def draw_arc_panel(
             transform=ax.transAxes,
             ha="left",
             va="center",
-            fontsize=6.7,
+            fontsize=6.8,
             color="#253041",
         )
         ax.plot(
@@ -215,6 +184,21 @@ def draw_arc_panel(
             clip_on=False,
         )
 
+    if lucid_tail is not None and lucid_radius is not None and lucid_value is not None:
+        label = str(metric["fmt"]).format(lucid_value)
+        ax.text(
+            lucid_tail,
+            lucid_radius + 0.035,
+            label,
+            ha="center",
+            va="center",
+            fontsize=7.6,
+            fontweight="bold",
+            color="#1F2937",
+            bbox={"boxstyle": "round,pad=0.12", "facecolor": "white", "edgecolor": "none", "alpha": 0.78},
+            zorder=5,
+        )
+
     ax.text(
         0.5,
         -0.11,
@@ -222,7 +206,7 @@ def draw_arc_panel(
         transform=ax.transAxes,
         ha="center",
         va="top",
-        fontsize=10,
+        fontsize=10.5,
         fontweight="bold",
         color="#1F2937",
     )
@@ -244,7 +228,7 @@ def main() -> None:
     fig, axes = plt.subplots(
         1,
         4,
-        figsize=(11.2, 2.75),
+        figsize=(11.2, 2.65),
         subplot_kw={"projection": "polar"},
         constrained_layout=False,
     )
