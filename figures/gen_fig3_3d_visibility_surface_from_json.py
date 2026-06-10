@@ -68,6 +68,19 @@ def flatten_records(data: Any) -> list[dict[str, Any]]:
                     records.append({"scene": scene, "method": method, "Vis": float(values[i][j])})
             return records
 
+        top_level_keys = [normalize_method(str(k)) for k in data.keys()]
+        method_like_keys = set(top_level_keys).intersection(set(METHOD_ORDER))
+        if len(method_like_keys) >= 2:
+            # Nested layout: {method: {scene: Vis, ...}, ...}
+            for method, scenes in data.items():
+                if not isinstance(scenes, dict):
+                    continue
+                for scene, vis in scenes.items():
+                    if isinstance(vis, dict):
+                        vis = pick_value(vis, ("Vis", "vis", "visibility", "Visibility"))
+                    records.append({"scene": str(scene), "method": normalize_method(str(method)), "Vis": float(vis)})
+            return records
+
         # Nested layout: {scene: {method: Vis, ...}, ...}
         for scene, methods in data.items():
             if not isinstance(methods, dict):
@@ -94,6 +107,13 @@ def ordered_unique(values: list[str], preferred: list[str] | None = None) -> lis
             result.append(value)
             seen.add(value)
     return result
+
+
+def compact_scene_label(scene: str) -> str:
+    """Keep long mine-scene descriptions from colliding in the 3D axis."""
+    if ":" in scene:
+        return scene.split(":", 1)[0].strip()
+    return scene
 
 
 def configure_style() -> None:
@@ -154,7 +174,7 @@ def main() -> None:
     configure_style()
 
     x, y = np.meshgrid(np.arange(len(methods)), np.arange(len(scenes)))
-    fig = plt.figure(figsize=(6.2, 3.55))
+    fig = plt.figure(figsize=(6.45, 3.65))
     ax = fig.add_subplot(111, projection="3d")
     surf = ax.plot_surface(
         x,
@@ -169,18 +189,18 @@ def main() -> None:
 
     ax.set_xlabel("")
     ax.set_ylabel("")
-    ax.set_zlabel("Vis", labelpad=4)
+    ax.set_zlabel("")
     ax.set_xticks(np.arange(len(methods)))
     ax.set_xticklabels(methods, rotation=18, ha="right")
     ax.set_yticks(np.arange(len(scenes)))
-    ax.set_yticklabels(scenes, rotation=-8)
+    ax.set_yticklabels([compact_scene_label(scene) for scene in scenes], rotation=-8)
     ax.tick_params(axis="z", labelsize=8, pad=1)
     ax.view_init(elev=25, azim=-55)
     ax.grid(False)
     ax.xaxis.pane.set_alpha(0.04)
     ax.yaxis.pane.set_alpha(0.04)
     ax.zaxis.pane.set_alpha(0.02)
-    cbar = fig.colorbar(surf, ax=ax, shrink=0.58, pad=0.035)
+    cbar = fig.colorbar(surf, ax=ax, shrink=0.56, pad=0.075)
     cbar.set_label("Visibility score (Vis)", rotation=270, labelpad=12)
 
     save_all(fig)
