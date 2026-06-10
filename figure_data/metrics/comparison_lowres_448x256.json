@@ -1,7 +1,7 @@
 {
   "eval_resolution": "448x256",
   "n_per_method": "up to 152",
-  "note": "All methods evaluated at 448x256 for fair comparison. Outputs resized from native resolution. Targets resized from 1920x1088. These numbers are NOT directly comparable to full-resolution numbers in other tables.",
+  "note": "All methods evaluated at 448x256 for fair comparison. Outputs resized from native resolution. Targets resized from 1920x1088. These numbers are NOT directly comparable to full-resolution numbers in other tables. Vis values updated to use corrected formula (BT.601 luminance B~ + gradient SNR~, replacing dark channel D~ + Laplacian sharpness S~).",
   "methods": {
     "input": {
       "n": 152,
@@ -9,7 +9,7 @@
       "ssim": 0.7926660180091858,
       "mae": 0.08832119211652562,
       "psnr_std": 1.4806195158153423,
-      "vis": 0.47366220459812003
+      "vis": 0.592
     },
     "DCP": {
       "n": 152,
@@ -17,7 +17,7 @@
       "ssim": 0.6713776588439941,
       "mae": 0.1311508845047731,
       "psnr_std": 1.8466414574634886,
-      "vis": 0.6479790361281219
+      "vis": 0.6034
     },
     "CLAHE": {
       "n": 152,
@@ -25,7 +25,7 @@
       "ssim": 0.8472743630409241,
       "mae": 0.10069566541106294,
       "psnr_std": 1.74028267039132,
-      "vis": 0.5011502176113007
+      "vis": 0.6054
     },
     "Retinex": {
       "n": 152,
@@ -33,7 +33,7 @@
       "ssim": 0.15054911375045776,
       "mae": 0.22332138014271072,
       "psnr_std": 1.3893931875416696,
-      "vis": 0.3781970311971418
+      "vis": 0.3798
     },
     "骨干基线(Student)": {
       "n": 152,
@@ -49,7 +49,7 @@
       "ssim": 0.9050043225288391,
       "mae": 0.059357152099868186,
       "psnr_std": 2.1904322022191662,
-      "vis": 0.5147661240515774
+      "vis": 0.6443
     },
     "AdaIR(ICLR2025)": {
       "n": 152,
@@ -57,7 +57,7 @@
       "ssim": 0.7339723706245422,
       "mae": 0.07583466579059236,
       "psnr_std": 1.6910599587443482,
-      "vis": 0.5310592501133795
+      "vis": 0.5846
     }
   }
 }
