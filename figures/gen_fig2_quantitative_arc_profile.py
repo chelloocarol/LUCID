@@ -3,7 +3,6 @@ from __future__ import annotations
 import csv
 import json
 import math
-import statistics
 from pathlib import Path
 
 import matplotlib
@@ -12,37 +11,40 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FULLREF_PATH = ROOT / "figure_data" / "metrics" / "test_fullref_metrics.csv"
-ADAIR_PATH = ROOT / "figure_data" / "metrics" / "adair_eval.json"
-VIS_PATH = ROOT / "figure_data" / "metrics" / "vis_metrics_all_methods_with_adair.csv"
+DATA_PATH = ROOT / "figure_data" / "metrics" / "arc_chart_data.json"
 FIG_DIR = ROOT / "figures"
 TABLE_DIR = ROOT / "figure_data" / "tables"
 OUT_STEM = "fig2_quantitative_arc_profile"
 
-FULLREF_ALIASES = {
-    "Input": ("input", "Input"),
-    "DCP": ("dcp", "DCP"),
-    "CLAHE": ("clahe", "CLAHE"),
-    "Retinex": ("retinex", "Retinex"),
-    "LUCIDMine": ("lucidmine_modal_v2", "LUCIDMine", "lucidmine", "LUCID"),
-}
-
-VIS_ALIASES = {
-    "Input": ("input", "Input"),
-    "DCP": ("dcp", "DCP"),
-    "CLAHE": ("clahe", "CLAHE"),
-    "Retinex": ("retinex", "Retinex"),
-    "AdaIR": ("adair", "AdaIR", "AdaIR(ICLR2025)"),
-    "LUCIDMine": ("lucidmine", "LUCIDMine", "lucidmine_modal_v2", "LUCID"),
-}
-
-METHODS = ["Input", "DCP", "CLAHE", "Retinex", "AdaIR", "LUCIDMine"]
-
 METRICS = [
-    ("PSNR ↑", "PSNR", True, "dB"),
-    ("SSIM ↑", "SSIM", True, ""),
-    ("MAE ↓", "MAE", False, ""),
-    ("Vis ↑", "Vis", True, ""),
+    {
+        "title": "PSNR ↑",
+        "key": "psnr",
+        "table_key": "PSNR",
+        "ticks": [0, 5, 10, 15, 20, 25],
+        "rmax": 25.0,
+    },
+    {
+        "title": "SSIM ↑",
+        "key": "ssim",
+        "table_key": "SSIM",
+        "ticks": [0, 0.25, 0.50, 0.75, 1.00],
+        "rmax": 1.0,
+    },
+    {
+        "title": "MAE ↓",
+        "key": "mae",
+        "table_key": "MAE",
+        "ticks": [0, 0.05, 0.10, 0.15, 0.20, 0.25],
+        "rmax": 0.25,
+    },
+    {
+        "title": "Vis ↑",
+        "key": "vis",
+        "table_key": "Vis",
+        "ticks": [0, 0.25, 0.50, 0.75, 1.00],
+        "rmax": 1.0,
+    },
 ]
 
 
@@ -63,72 +65,24 @@ def configure_style() -> None:
     )
 
 
-def require_file(path: Path) -> None:
-    if not path.exists():
-        raise FileNotFoundError(f"Missing required data file: {path}")
+def load_rows() -> list[dict[str, float | str | int]]:
+    if not DATA_PATH.exists():
+        raise FileNotFoundError(f"Missing arc-chart data file: {DATA_PATH}")
+    data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+    methods = data["methods_order"]
+    metrics = data["metrics"]
 
-
-def read_fullref_rows() -> dict[str, dict[str, str]]:
-    require_file(FULLREF_PATH)
-    rows = list(csv.DictReader(FULLREF_PATH.read_text(encoding="utf-8-sig").splitlines()))
-    return {str(row["method"]).lower(): row for row in rows}
-
-
-def read_adair_eval() -> dict:
-    require_file(ADAIR_PATH)
-    return json.loads(ADAIR_PATH.read_text(encoding="utf-8"))
-
-
-def read_vis_means() -> dict[str, float]:
-    require_file(VIS_PATH)
-    rows = list(csv.DictReader(VIS_PATH.read_text(encoding="utf-8-sig").splitlines()))
-    grouped: dict[str, list[float]] = {}
-    for row in rows:
-        method = str(row["method"]).lower()
-        grouped.setdefault(method, []).append(float(row["vis"]))
-    return {method: statistics.mean(values) for method, values in grouped.items()}
-
-
-def resolve_row(rows: dict[str, dict[str, str]], canonical: str) -> dict[str, str]:
-    for alias in FULLREF_ALIASES[canonical]:
-        row = rows.get(alias.lower())
-        if row is not None:
-            return row
-    raise KeyError(f"Cannot find full-reference row for {canonical}; tried {FULLREF_ALIASES[canonical]}")
-
-
-def resolve_vis(vis_means: dict[str, float], canonical: str) -> float:
-    for alias in VIS_ALIASES[canonical]:
-        if alias.lower() in vis_means:
-            return vis_means[alias.lower()]
-    raise KeyError(f"Cannot find Vis rows for {canonical}; tried {VIS_ALIASES[canonical]}")
-
-
-def collect_table() -> list[dict[str, float | str | int]]:
-    fullref_rows = read_fullref_rows()
-    adair = read_adair_eval()
-    vis_means = read_vis_means()
-    rows = []
-    for method in METHODS:
-        if method == "AdaIR":
-            n = int(adair.get("n", 0))
-            psnr = float(adair["full_psnr"])
-            ssim = float(adair["full_ssim"])
-            mae = float(adair["masked_l1"])
-        else:
-            record = resolve_row(fullref_rows, method)
-            n = int(record.get("n", 0))
-            psnr = float(record["psnr"])
-            ssim = float(record["ssim"])
-            mae = float(record["mae"])
+    rows: list[dict[str, float | str | int]] = []
+    for method in methods:
+        record = metrics[method]
         rows.append(
             {
                 "Method": method,
-                "n": n,
-                "PSNR": psnr,
-                "SSIM": ssim,
-                "MAE": mae,
-                "Vis": resolve_vis(vis_means, method),
+                "n": int(data.get("n", 152)),
+                "PSNR": float(record["psnr"]),
+                "SSIM": float(record["ssim"]),
+                "MAE": float(record["mae"]),
+                "Vis": float(record["vis"]),
             }
         )
     return rows
@@ -136,18 +90,18 @@ def collect_table() -> list[dict[str, float | str | int]]:
 
 def save_tables(rows: list[dict[str, float | str | int]]) -> None:
     TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = TABLE_DIR / "comparison_lowres_448x256_summary.csv"
+    csv_path = TABLE_DIR / "arc_chart_data_summary.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["Method", "n", "PSNR", "SSIM", "MAE", "Vis"])
         writer.writeheader()
         writer.writerows(rows)
 
-    tex_path = TABLE_DIR / "comparison_lowres_448x256_summary.tex"
+    tex_path = TABLE_DIR / "arc_chart_data_summary.tex"
     lines = [
         r"\begin{table}[t]",
         r"\centering",
-        r"\caption{Quantitative comparison at 448$\times$256 resolution. Higher PSNR, SSIM, and Vis are better; lower MAE is better.}",
-        r"\label{tab:comparison_lowres_448x256}",
+        r"\caption{Unified 448$\times$256 quantitative comparison. Higher PSNR, SSIM, and Vis are better; lower MAE is better.}",
+        r"\label{tab:arc_chart_data_summary}",
         r"\begin{tabular}{lccccc}",
         r"\toprule",
         r"Method & $n$ & PSNR$\uparrow$ & SSIM$\uparrow$ & MAE$\downarrow$ & Vis$\uparrow$ \\",
@@ -164,44 +118,75 @@ def save_tables(rows: list[dict[str, float | str | int]]) -> None:
     print(f"Saved: {tex_path}")
 
 
-def normalize(values: np.ndarray) -> np.ndarray:
-    low = float(np.min(values))
-    high = float(np.max(values))
-    if math.isclose(low, high):
-        return np.ones_like(values)
-    return (values - low) / (high - low)
+def tick_labels(ticks: list[float]) -> list[str]:
+    labels = []
+    for tick in ticks:
+        if tick >= 1 and abs(tick - round(tick)) < 1e-8:
+            labels.append(str(int(round(tick))))
+        elif tick == 0:
+            labels.append("0")
+        else:
+            labels.append(f"{tick:.2f}".rstrip("0").rstrip("."))
+    return labels
 
 
-def draw_arc_panel(ax: plt.Axes, rows: list[dict[str, float | str | int]], title: str, key: str, unit: str) -> None:
-    values = np.array([float(row[key]) for row in rows], dtype=float)
-    norm = normalize(values)
+def draw_arc_panel(
+    ax: plt.Axes,
+    rows: list[dict[str, float | str | int]],
+    metric: dict[str, object],
+) -> None:
+    methods = [str(row["Method"]) for row in rows]
+    values = np.array([float(row[str(metric["table_key"])]) for row in rows], dtype=float)
+    rmax = float(metric["rmax"])
+    ticks = [float(t) for t in metric["ticks"]]  # type: ignore[index]
 
     theta_start = math.radians(135.0)
     max_span = math.radians(245.0)
-    theta_bg = np.linspace(theta_start, theta_start - max_span, 300)
+    theta_ref = np.linspace(theta_start, theta_start - max_span, 360)
 
-    radii = np.linspace(1.04, 0.46, len(METHODS))
     cmap = plt.get_cmap("Blues")
-    colors = [cmap(v) for v in np.linspace(0.48, 0.86, len(METHODS))]
+    colors = [cmap(v) for v in np.linspace(0.46, 0.88, len(methods))]
 
     ax.set_theta_zero_location("E")
     ax.set_theta_direction(1)
-    ax.set_ylim(0.30, 1.14)
+    ax.set_ylim(0, rmax)
     ax.set_facecolor("white")
-    ax.grid(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
     ax.spines["polar"].set_visible(False)
 
-    for idx, (method, radius, val, score, color) in enumerate(zip(METHODS, radii, values, norm, colors)):
-        ax.plot(theta_bg, np.full_like(theta_bg, radius), color="#E8EEF7", lw=8.0, solid_capstyle="round", zorder=1)
-        theta = np.linspace(theta_start, theta_start - max_span * (0.08 + 0.92 * score), 220)
-        ax.plot(theta, np.full_like(theta, radius), color=color, lw=8.0, solid_capstyle="round", zorder=2)
+    # Hide angular coordinates; keep only subtle radial value ticks.
+    ax.set_xticks([])
+    ax.set_yticks(ticks)
+    ax.set_yticklabels(tick_labels(ticks), fontsize=6.5, color="#7B8494")
+    ax.set_rlabel_position(112)
+    ax.yaxis.grid(True, color="#E4EAF2", linewidth=0.55)
+    ax.xaxis.grid(False)
 
-    # Method names are placed as a compact left-side radial list rather than
-    # on the arcs themselves; this prevents label collision in four-panel layout.
-    label_ys = np.linspace(0.62, 0.34, len(METHODS))
-    for method, y, color in zip(METHODS, label_ys, colors):
+    # Method-specific arcs. Radius and arc length both follow the metric value;
+    # faint full-span arcs provide a visual reference at the same radius.
+    for method, value, color in zip(methods, values, colors):
+        clipped = min(max(value, 0.0), rmax)
+        score = clipped / rmax if rmax else 0.0
+        ax.plot(
+            theta_ref,
+            np.full_like(theta_ref, clipped),
+            color="#ECF1F8",
+            lw=8.0,
+            solid_capstyle="round",
+            zorder=1,
+        )
+        theta = np.linspace(theta_start, theta_start - max_span * score, 260)
+        ax.plot(
+            theta,
+            np.full_like(theta, clipped),
+            color=color,
+            lw=8.0,
+            solid_capstyle="round",
+            zorder=3,
+        )
+
+    # Left-side method list, consistent across panels.
+    label_ys = np.linspace(0.62, 0.34, len(methods))
+    for method, y, color in zip(methods, label_ys, colors):
         ax.text(
             0.035,
             y,
@@ -209,7 +194,7 @@ def draw_arc_panel(ax: plt.Axes, rows: list[dict[str, float | str | int]], title
             transform=ax.transAxes,
             ha="left",
             va="center",
-            fontsize=6.8,
+            fontsize=6.7,
             color="#253041",
         )
         ax.plot(
@@ -224,8 +209,8 @@ def draw_arc_panel(ax: plt.Axes, rows: list[dict[str, float | str | int]], title
 
     ax.text(
         0.5,
-        -0.105,
-        title,
+        -0.11,
+        str(metric["title"]),
         transform=ax.transAxes,
         ha="center",
         va="top",
@@ -244,23 +229,23 @@ def save_all(fig: plt.Figure) -> None:
 
 
 def main() -> None:
-    rows = collect_table()
-    save_tables(rows)
     configure_style()
+    rows = load_rows()
+    save_tables(rows)
 
     fig, axes = plt.subplots(
         1,
         4,
-        figsize=(11.2, 2.65),
+        figsize=(11.2, 2.75),
         subplot_kw={"projection": "polar"},
         constrained_layout=False,
     )
     fig.patch.set_facecolor("white")
 
-    for ax, (title, metric_key, _higher_is_better, unit) in zip(axes, METRICS):
-        draw_arc_panel(ax, rows, title, metric_key, unit)
+    for ax, metric in zip(axes, METRICS):
+        draw_arc_panel(ax, rows, metric)
 
-    fig.subplots_adjust(left=0.012, right=0.995, top=0.965, bottom=0.185, wspace=0.18)
+    fig.subplots_adjust(left=0.012, right=0.995, top=0.965, bottom=0.19, wspace=0.20)
     save_all(fig)
 
 

@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Unified 448$\times$256 quantitative comparison. Higher PSNR, SSIM, and Vis are better; lower MAE is better.}
+\label{tab:arc_chart_data_summary}
+\begin{tabular}{lccccc}
+\toprule
+Method & $n$ & PSNR$\uparrow$ & SSIM$\uparrow$ & MAE$\downarrow$ & Vis$\uparrow$ \\
+\midrule
+Input & 152 & 19.27 & 0.793 & 0.088 & 0.592 \\
+DCP & 152 & 16.60 & 0.671 & 0.131 & 0.603 \\
+CLAHE & 152 & 18.56 & 0.847 & 0.101 & 0.605 \\
+Retinex & 152 & 10.88 & 0.151 & 0.223 & 0.380 \\
+AdaIR & 152 & 20.71 & 0.734 & 0.076 & 0.585 \\
+LUCIDMine & 152 & 23.12 & 0.905 & 0.059 & 0.644 \\
+\bottomrule
+\end{tabular}
+\end{table}
