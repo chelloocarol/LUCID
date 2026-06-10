@@ -1,0 +1,58 @@
+{
+  "input": {
+    "contrast": 0.297595,
+    "entropy": 7.288134,
+    "luminance": 0.378954,
+    "glare": 0.013939,
+    "gradient_snr": 9.21755,
+    "vis": 0.591997
+  },
+  "dcp": {
+    "contrast": 0.676451,
+    "entropy": 6.704324,
+    "luminance": 0.189052,
+    "glare": 0.011667,
+    "gradient_snr": 8.900628,
+    "vis": 0.603393
+  },
+  "clahe": {
+    "contrast": 0.463913,
+    "entropy": 7.433645,
+    "luminance": 0.397391,
+    "glare": 0.020495,
+    "gradient_snr": 7.163955,
+    "vis": 0.605376
+  },
+  "retinex": {
+    "contrast": 0.197631,
+    "entropy": 4.075726,
+    "luminance": 0.127792,
+    "glare": 7e-06,
+    "gradient_snr": 6.082111,
+    "vis": 0.379769
+  },
+  "student": {
+    "contrast": 0.53788,
+    "entropy": 6.983541,
+    "luminance": 0.249348,
+    "glare": 0.005004,
+    "gradient_snr": 12.918029,
+    "vis": 0.668338
+  },
+  "lucidmine": {
+    "contrast": 0.423038,
+    "entropy": 7.190758,
+    "luminance": 0.357434,
+    "glare": 0.014965,
+    "gradient_snr": 11.583901,
+    "vis": 0.644276
+  },
+  "adair": {
+    "contrast": 0.445622,
+    "entropy": 7.29201,
+    "luminance": 0.319512,
+    "glare": 0.012838,
+    "gradient_snr": 7.285867,
+    "vis": 0.584553
+  }
+}
