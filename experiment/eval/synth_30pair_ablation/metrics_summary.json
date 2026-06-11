@@ -1,0 +1,46 @@
+{
+  "骨干基线": {
+    "contrast": 0.637111,
+    "entropy": 7.246739,
+    "luminance": 0.299161,
+    "glare": 0.005246,
+    "gradient_snr": 7.390993,
+    "vis": 0.549133,
+    "psnr": 22.265138,
+    "ssim": 0.878801,
+    "mae": 0.057587
+  },
+  "骨干+VCA": {
+    "contrast": 0.590688,
+    "entropy": 7.267733,
+    "luminance": 0.338669,
+    "glare": 0.005772,
+    "gradient_snr": 7.179041,
+    "vis": 0.551512,
+    "psnr": 21.976346,
+    "ssim": 0.870349,
+    "mae": 0.060142
+  },
+  "骨干+GARC": {
+    "contrast": 0.554588,
+    "entropy": 7.130655,
+    "luminance": 0.321948,
+    "glare": 0.004013,
+    "gradient_snr": 7.137182,
+    "vis": 0.518278,
+    "psnr": 23.416075,
+    "ssim": 0.91437,
+    "mae": 0.048263
+  },
+  "LUCIDMine": {
+    "contrast": 0.527978,
+    "entropy": 7.14853,
+    "luminance": 0.353759,
+    "glare": 0.004291,
+    "gradient_snr": 6.989193,
+    "vis": 0.526898,
+    "psnr": 22.38132,
+    "ssim": 0.895166,
+    "mae": 0.058341
+  }
+}

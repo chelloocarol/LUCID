@@ -1,0 +1,68 @@
+{
+  "input": {
+    "contrast": 0.336544,
+    "entropy": 6.611955,
+    "luminance": 0.414628,
+    "glare": 0.002731,
+    "gradient_snr": 4.606458,
+    "vis": 0.501908,
+    "psnr": 18.767565,
+    "ssim": 0.850881,
+    "mae": 0.108262
+  },
+  "dcp": {
+    "contrast": 0.768564,
+    "entropy": 6.707673,
+    "luminance": 0.191867,
+    "glare": 0.002011,
+    "gradient_snr": 4.537335,
+    "vis": 0.51826,
+    "psnr": 16.310128,
+    "ssim": 0.747453,
+    "mae": 0.134693
+  },
+  "clahe": {
+    "contrast": 0.57373,
+    "entropy": 7.293448,
+    "luminance": 0.41507,
+    "glare": 0.011235,
+    "gradient_snr": 3.726688,
+    "vis": 0.54275,
+    "psnr": 17.4606,
+    "ssim": 0.781255,
+    "mae": 0.114048
+  },
+  "retinex": {
+    "contrast": 0.398976,
+    "entropy": 6.651933,
+    "luminance": 0.452188,
+    "glare": 0.000331,
+    "gradient_snr": 3.845607,
+    "vis": 0.542515,
+    "psnr": 15.306994,
+    "ssim": 0.808546,
+    "mae": 0.153984
+  },
+  "adair": {
+    "contrast": 0.647233,
+    "entropy": 6.958088,
+    "luminance": 0.223144,
+    "glare": 0.002438,
+    "gradient_snr": 6.687432,
+    "vis": 0.550298,
+    "psnr": 19.130616,
+    "ssim": 0.855408,
+    "mae": 0.104069
+  },
+  "lucidmine": {
+    "contrast": 0.527978,
+    "entropy": 7.14853,
+    "luminance": 0.353759,
+    "glare": 0.004291,
+    "gradient_snr": 6.989193,
+    "vis": 0.58895,
+    "psnr": 22.38132,
+    "ssim": 0.895166,
+    "mae": 0.058341
+  }
+}

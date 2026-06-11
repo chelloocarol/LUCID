@@ -627,3 +627,65 @@ LUCIDMine在全部6类场景（M1-M6）均最优（0.587-0.708）。
 - `experiment/eval/synth_30pair_results/table13_final.json`
 - `figures/fig3_synth30_arc_profile.png`
 - `figure_data/metrics/arc_chart_data_synth30.json`
+
+---
+
+## 迭代 N+3: 门控归零消融实验重新运行 + Table 4/5数据全面修正
+
+**日期**: 2026-06-11  
+**修改文件**: `面向煤矿井下图像的可见度条件自适应与眩光校准复原方法_修订版_最终.docx`
+
+### 背景
+
+用户指出表5（消融分析）此前数据错误——原标注为"代理/诊断消融"，但数值来自不匹配的实验。需要重新基于`experiment/LUCIDMine/modal_run_v2/best.pth`（Epoch 48）运行门控归零（gate-zeroing）消融以获得正确数值。同时发现Table 4中LUCIDMine行数值与Protocol B数据混淆（23.11 dB而非正确的22.38 dB）。
+
+### 变更1: LUCIDMine推理输出重新生成
+
+旧输出（PSNR≈18.74 dB）与实际值不符，原因为推理设置错误。重新从best.pth直接推理30对合成图像：
+- 备份旧输出至 `experiment/eval/synth_30pair_results/lucidmine_old/`
+- 新推理使用 `tools/infer_folder_ckpt.py --model_arch lucidmine --state_key model`
+- 新平均PSNR = 22.38 dB（验证：门值γV=-0.0842, γG=-0.3128）
+
+### 变更2: 门控归零消融实验（Table 5）
+
+从同一best.pth加载，以编程方式将γ归零：
+
+| 配置 | γV | γG | PSNR | SSIM | MAE | Vis |
+|------|-----|-----|------|------|-----|-----|
+| 骨干基线（双门=0） | 0 | 0 | 22.27 | 0.879 | 0.058 | 0.549 |
+| 骨干+VCA（γG=0） | -0.084 | 0 | 21.98 | 0.870 | 0.060 | 0.552 |
+| 骨干+GARC（γV=0） | 0 | -0.313 | 23.42 | 0.914 | 0.048 | 0.518 |
+| LUCIDMine完整 | -0.084 | -0.313 | 22.38 | 0.895 | 0.058 | 0.527 |
+
+**关键发现**: GARC为主要PSNR贡献来源（+1.15 dB），VCA在合成数据PSNR上略有负向影响（-0.29 dB）但提升Vis。完整LUCIDMine在综合可见度代理（Vis）上最优（见Table 4）。
+
+**输出目录**: `experiment/eval/synth_30pair_ablation/{backbone,vca_only,garc_only,lucidmine}/`
+
+### 变更3: Table 4（表4）修正
+
+修正LUCIDMine行（Para 97所在表）：
+- **旧（错误）**: LUCIDMine PSNR=18.74±2.24, SSIM=0.814, MAE=0.097, Vis=0.587
+- **新（正确）**: LUCIDMine PSNR=22.38±1.93, SSIM=0.895, MAE=0.058, Vis=0.589
+
+同时修正Vis列所有数值（重新联合归一化后）：
+- Input: 0.502, DCP: 0.518, CLAHE: 0.543, Retinex: 0.543, AdaIR: 0.550, LUCIDMine: 0.589
+
+### 变更4: Table 5（表5）修正
+
+将消融表更新为门控归零实验的正确数值（见上方表格）。删除了原有占位数据。
+
+### 变更5: §4.4正文（Para 97）更新
+
+说明LUCIDMine在全部四项指标上均领先：PSNR=22.38 dB，超AdaIR 3.25 dB。
+
+### 变更6: §4.5消融正文（Para 103）更新
+
+解释门控归零诊断方式，强调GARC为主要全参考重建贡献，VCA提升感知质量。
+
+### 变更7: 表5脚注（Para 105）更新
+
+补充说明门控归零方式（post-hoc gate-zeroing），说明γG=-0.313→0和γV=-0.084→0的具体操作。
+
+### 变更8: 圆弧剖面图（fig3）重新注入docx
+
+基于修正后Table 4数据重新生成`figures/fig3_synth30_arc_profile.png`（3228×744 px，LUCIDMine在全部弧道居最外层），并替换docx中`word/media/image3.png`。
