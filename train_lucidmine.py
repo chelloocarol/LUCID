@@ -121,14 +121,13 @@ def unfreeze_bottleneck_decoder(model):
 # ---------- Training ----------
 
 def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn,
-                    w_l1, w_ssim, w_edge, w_glare, scaler=None):
+                    glare_loss_fn, w_l1, w_ssim, w_edge, w_glare, scaler=None):
     model.train()
     total_loss = total_l1 = total_ssim_l = total_edge = total_glare = 0.0
     n = 0
     for batch in loader:
         haze   = batch["haze"].to(device, non_blocking=True)
         target = batch["target"].to(device, non_blocking=True)
-        ini    = batch["haze"].to(device, non_blocking=True)
 
         optimizer.zero_grad()
         if scaler is not None:
@@ -137,11 +136,14 @@ def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn
                 restored = restored.clamp(0, 1)
                 l1_l = (restored - target).abs().mean()
                 edge_l = edge_loss_fn(restored, target)
+                priors = build_mine_priors(model, haze)
+                backbone_ref = model.mine_prior.to_image_space(haze).clamp(0, 1)
+                glare_l = glare_loss_fn(restored, backbone_ref, priors[:, 2:3])
             # SSIM and its backward must run in fp32 to avoid fp16 variance instability
             restored_f32 = restored.float()
             target_f32   = target.float()
             ssim_l = 1.0 - ssim_loss_fn(restored_f32, target_f32)
-            loss = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l
+            loss = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l + w_glare * glare_l
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -153,7 +155,10 @@ def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn
             l1_l   = (restored - target).abs().mean()
             ssim_l = 1.0 - ssim_loss_fn(restored, target)
             edge_l = edge_loss_fn(restored, target)
-            loss   = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l
+            priors = build_mine_priors(model, haze)
+            backbone_ref = model.mine_prior.to_image_space(haze).clamp(0, 1)
+            glare_l = glare_loss_fn(restored, backbone_ref, priors[:, 2:3])
+            loss   = w_l1 * l1_l + w_ssim * ssim_l + w_edge * edge_l + w_glare * glare_l
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
@@ -163,6 +168,7 @@ def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn
         total_l1    += l1_l.item() * bs
         total_ssim_l+= ssim_l.item() * bs
         total_edge  += edge_l.item() * bs
+        total_glare += glare_l.item() * bs
         n += bs
 
     return {
@@ -170,6 +176,7 @@ def train_one_epoch(model, loader, optimizer, device, ssim_loss_fn, edge_loss_fn
         "l1":    total_l1    / n,
         "ssim":  total_ssim_l / n,
         "edge":  total_edge  / n,
+        "glare": total_glare / n,
     }
 
 
@@ -244,8 +251,9 @@ def main():
     print(f"Loaded {args.init_ckpt}: missing={len(missing)}, unexpected={len(unexpected)}")
 
     # Loss
-    ssim_fn = SSIM().to(device)
-    edge_fn = SobelEdgeLoss().to(device)
+    ssim_fn  = SSIM().to(device)
+    edge_fn  = SobelEdgeLoss().to(device)
+    glare_fn = GlareRegLoss().to(device)
 
     # AMP scaler (GPU only)
     scaler = torch.cuda.amp.GradScaler() if device.type == "cuda" else None
@@ -275,7 +283,7 @@ def main():
         t0 = time.time()
         train_metrics = train_one_epoch(
             model, train_loader, optimizer, device,
-            ssim_fn, edge_fn,
+            ssim_fn, edge_fn, glare_fn,
             args.w_l1, args.w_ssim, args.w_edge, args.w_glare, scaler
         )
         val_metrics = evaluate(model, val_loader, device)

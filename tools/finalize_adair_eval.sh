@@ -25,7 +25,7 @@ echo "=== Step 2: Update lowres comparison table with AdaIR results ==="
 python3 - << 'PYEOF'
 import json, os
 
-ROOT = "/home/user/LUCID"
+ROOT = os.getcwd()
 
 # Load existing comparison table
 cmp_path = os.path.join(ROOT, "experiment/eval/comparison_lowres_448x256.json")

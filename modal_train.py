@@ -12,6 +12,7 @@ The script:
   4. Downloads best.pth / last.pth to experiment/LUCIDMine/modal_run/
 """
 import os
+from pathlib import Path
 import modal
 
 # ---- Modal app ----
@@ -24,7 +25,7 @@ HOURS   = 60 * MINUTES
 volume = modal.Volume.from_name("lucidmine-checkpoints", create_if_missing=True)
 VOLUME_PATH = "/results"
 
-LUCID = "/home/user/LUCID"
+LUCID = str(Path(__file__).parent.resolve())
 DATA  = "/home/user/lucidmine-40-video-dataset/data"
 
 # Image: PyTorch + deps + local code (skip experiment/ to save bandwidth)
